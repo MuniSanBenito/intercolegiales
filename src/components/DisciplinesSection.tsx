@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Gamepad2, MapPin, Calendar, Search, Sparkles, Swords, Zap, Trophy, Music } from 'lucide-react';
+import { Gamepad2, MapPin, Calendar, Search, Swords, Zap, Trophy, Music } from 'lucide-react';
 import { DISCIPLINES } from '../data/tournamentData';
+import { sound } from '../lib/sound';
 
 
 interface DisciplinesSectionProps {
@@ -41,7 +42,7 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
           </h2>
           <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
             Explorá el cuadro completo de deportes físicos de campo y las competencias del área cultural, 
-            mente y gaming. Cada disciplina otorga puntos de experiencia (XP) para la tabla general.
+            mente y gaming para la tabla general de posiciones.
           </p>
         </div>
 
@@ -50,7 +51,8 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-2xl bg-slate-900/90 border border-slate-800 w-full lg:w-auto">
             <button
-              onClick={() => setActiveFilter('all')}
+              onClick={() => { sound.click(); setActiveFilter('all'); }}
+              onMouseEnter={() => sound.hover()}
               className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all ${
                 activeFilter === 'all'
                   ? 'bg-cyan-500 text-black shadow-md shadow-cyan-500/20'
@@ -60,7 +62,8 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
               Todas ({DISCIPLINES.length})
             </button>
             <button
-              onClick={() => setActiveFilter('deportes')}
+              onClick={() => { sound.click(); setActiveFilter('deportes'); }}
+              onMouseEnter={() => sound.hover()}
               className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 ${
                 activeFilter === 'deportes'
                   ? 'bg-emerald-400 text-black shadow-md shadow-emerald-400/20'
@@ -70,7 +73,8 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
               <span>⚽ Deportes (6)</span>
             </button>
             <button
-              onClick={() => setActiveFilter('cultural')}
+              onClick={() => { sound.click(); setActiveFilter('cultural'); }}
+              onMouseEnter={() => sound.hover()}
               className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 ${
                 activeFilter === 'cultural'
                   ? 'bg-purple-500 text-white shadow-md shadow-purple-500/30'
@@ -81,7 +85,8 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
               <span>Área Cultural (4)</span>
             </button>
             <button
-              onClick={() => setActiveFilter('futbol')}
+              onClick={() => { sound.click(); setActiveFilter('futbol'); }}
+              onMouseEnter={() => sound.hover()}
               className={`px-3 py-2 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all ${
                 activeFilter === 'futbol'
                   ? 'bg-amber-400 text-black shadow-md shadow-amber-400/20'
@@ -91,7 +96,8 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
               Fútbol
             </button>
             <button
-              onClick={() => setActiveFilter('voley')}
+              onClick={() => { sound.click(); setActiveFilter('voley'); }}
+              onMouseEnter={() => sound.hover()}
               className={`px-3 py-2 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all ${
                 activeFilter === 'voley'
                   ? 'bg-amber-400 text-black shadow-md shadow-amber-400/20'
@@ -101,7 +107,8 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
               Vóley
             </button>
             <button
-              onClick={() => setActiveFilter('atletismo')}
+              onClick={() => { sound.click(); setActiveFilter('atletismo'); }}
+              onMouseEnter={() => sound.hover()}
               className={`px-3 py-2 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all ${
                 activeFilter === 'atletismo'
                   ? 'bg-amber-400 text-black shadow-md shadow-amber-400/20'
@@ -150,11 +157,6 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
                     >
                       {item.typeLabel} • {item.categoryLabel}
                     </span>
-
-                    <div className="flex items-center gap-1 text-xs font-mono font-bold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/30">
-                      <Sparkles className="w-3 h-3 text-amber-400" />
-                      <span>+{item.xpReward} XP</span>
-                    </div>
                   </div>
 
                   {/* Title */}
@@ -195,7 +197,8 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
 
                 {/* Action CTA */}
                 <button
-                  onClick={() => onRegisterDiscipline(item.name)}
+                  onClick={() => { sound.click(); onRegisterDiscipline(item.name); }}
+                  onMouseEnter={() => sound.hover()}
                   className={`w-full py-3 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${
                     isCultural
                       ? 'bg-purple-950/80 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 text-purple-200 hover:text-white border border-purple-500/40 hover:border-transparent'

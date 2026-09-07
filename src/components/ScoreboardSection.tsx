@@ -1,5 +1,6 @@
 import { Trophy, Clock, School } from 'lucide-react';
 import { HOUSES } from '../data/tournamentData';
+import { sound } from '../lib/sound';
 
 export function ScoreboardSection() {
   return (
@@ -51,6 +52,15 @@ export function ScoreboardSection() {
                   </span>
                 </div>
 
+                {/* School Logo */}
+                <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
+                  <img
+                    src={house.logo}
+                    alt={`Escudo de ${house.name}`}
+                    className="w-full h-full object-contain filter drop-shadow-md"
+                  />
+                </div>
+
                 {/* Name & Tag */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -80,6 +90,8 @@ export function ScoreboardSection() {
         <div className="text-center mt-10">
           <a
             href="#inscripciones"
+            onClick={() => sound.click()}
+            onMouseEnter={() => sound.hover()}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-cyber font-bold text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-lg shadow-cyan-500/20"
           >
             Sumá puntos para tu escuela

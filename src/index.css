@@ -191,41 +191,46 @@
     display: none !important;
   }
 
-  #inscripciones > *:not([class~="lg:col-span-5"]) {
+  #inscripciones > *:not(.max-w-3xl) {
     display: none !important;
   }
 
-  #inscripciones .lg\:col-span-5 {
+  /* Hide all non-credential content inside the section */
+  #inscripciones .max-w-3xl > *:not(.credential-card) {
+    display: none !important;
+  }
+
+  /* Show only the credential card when verified */
+  #inscripciones .credential-card {
     display: block !important;
     width: 100% !important;
     max-width: 400px !important;
     margin: 0 auto !important;
   }
 
-  #inscripciones .lg\:col-span-5 * {
+  #inscripciones .credential-card * {
     color: black !important;
     border-color: #ccc !important;
     background: white !important;
     box-shadow: none !important;
   }
 
-  #inscripciones .lg\:col-span-5 h3,
-  #inscripciones .lg\:col-span-5 .font-cyber {
+  #inscripciones .credential-card .font-cyber {
     color: black !important;
     text-shadow: none !important;
   }
 
-  #inscripciones .lg\:col-span-5 .bg-gradient-to-br {
-    background: white !important;
-    border: 2px solid #333 !important;
-  }
-
-  /* Hide nav, hero, sections, footer, buttons */
+  /* Hide navigation tabs, buttons, and non-credential elements */
   header, footer, nav, main > section:not(#inscripciones) {
     display: none !important;
   }
 
   #inscripciones button {
     display: none !important;
+  }
+
+  /* Show print button inside credential */
+  #inscripciones .credential-card .print-btn {
+    display: inline-flex !important;
   }
 }

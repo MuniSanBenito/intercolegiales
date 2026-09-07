@@ -2,6 +2,7 @@ export interface House {
   id: string;
   name: string;
   tag: string;
+  logo: string;
   color: string;
   glowColor: string;
   borderColor: string;
@@ -41,6 +42,7 @@ export const HOUSES: House[] = [
     id: 'san-benito',
     name: 'San Benito Abad',
     tag: 'SBA',
+    logo: '/logos/san-benito.png',
     color: 'from-red-600 via-rose-500 to-amber-500',
     glowColor: 'rgba(239, 68, 68, 0.4)',
     borderColor: 'border-red-500/40',
@@ -50,6 +52,7 @@ export const HOUSES: House[] = [
     id: 'san-alberto',
     name: 'San Alberto Hurtado',
     tag: 'SAH',
+    logo: '/logos/san-alberto.png',
     color: 'from-cyan-500 via-blue-500 to-indigo-600',
     glowColor: 'rgba(6, 182, 212, 0.4)',
     borderColor: 'border-cyan-500/40',
@@ -59,6 +62,7 @@ export const HOUSES: House[] = [
     id: 'zuloaga',
     name: 'Escuela Zuloaga',
     tag: 'EZU',
+    logo: '/logos/zuloaga.png',
     color: 'from-amber-400 via-yellow-500 to-orange-500',
     glowColor: 'rgba(245, 158, 11, 0.4)',
     borderColor: 'border-amber-500/40',
@@ -68,6 +72,7 @@ export const HOUSES: House[] = [
     id: 'evita',
     name: 'Escuela Evita',
     tag: 'EVA',
+    logo: '/logos/evita.png',
     color: 'from-purple-500 via-fuchsia-500 to-pink-500',
     glowColor: 'rgba(168, 85, 247, 0.4)',
     borderColor: 'border-purple-500/40',
@@ -77,6 +82,7 @@ export const HOUSES: House[] = [
     id: 'enet-18',
     name: 'Escuela Técnica ENET N° 18',
     tag: 'E18',
+    logo: '/logos/enet-18.png',
     color: 'from-emerald-500 via-teal-500 to-cyan-600',
     glowColor: 'rgba(16, 185, 129, 0.4)',
     borderColor: 'border-emerald-500/40',

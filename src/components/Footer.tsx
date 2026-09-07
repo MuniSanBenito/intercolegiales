@@ -1,5 +1,6 @@
 import React from 'react';
-import { Gamepad2, ShieldAlert, MessageSquare, Tv, Radio, Globe, MapPin } from 'lucide-react';
+import { Gamepad2, ShieldAlert, MapPin } from 'lucide-react';
+import { sound } from '../lib/sound';
 
 export const Footer: React.FC = () => {
   return (
@@ -8,7 +9,7 @@ export const Footer: React.FC = () => {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-cyan-500/5 blur-3xl pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {/* Brand & Mission */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
@@ -48,57 +49,24 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm font-mono">
               <li>
-                <a href="#casas" className="hover:text-cyan-400 transition-colors">
+                <a href="#casas" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Las 5 Escuelas
                 </a>
               </li>
               <li>
-                <a href="#disciplinas" className="hover:text-cyan-400 transition-colors">
+                <a href="#disciplinas" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Deportes & Área Cultural
                 </a>
               </li>
               <li>
-                <a href="#inscripciones" className="hover:text-cyan-400 transition-colors">
+                <a href="#inscripciones" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Inscripciones Oficiales
                 </a>
               </li>
               <li>
-                <a href="#cronograma" className="hover:text-cyan-400 transition-colors">
-                  ✦ Cronograma del Torneo
+                <a href="#posiciones" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
+                  ✦ Tabla de Posiciones
                 </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Channels & Info */}
-          <div>
-            <h4 className="text-xs font-cyber font-bold uppercase tracking-widest text-white mb-4">
-              Comunidad & Stream
-            </h4>
-            <ul className="space-y-3 text-sm font-mono">
-              <li className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-pink-400" />
-                <span className="hover:text-white transition-colors cursor-pointer">
-                  @intercolegialessanbe
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Tv className="w-4 h-4 text-red-400" />
-                <span className="hover:text-white transition-colors cursor-pointer">
-                  Transmisión Oficial San Benito
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Radio className="w-4 h-4 text-cyan-400" />
-                <span className="hover:text-white transition-colors cursor-pointer">
-                  Radio Escolar Live Hub
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-purple-400" />
-                <span className="hover:text-white transition-colors cursor-pointer">
-                  Comunidad Intercolegial 2026
-                </span>
               </li>
             </ul>
           </div>

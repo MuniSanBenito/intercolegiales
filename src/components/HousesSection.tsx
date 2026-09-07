@@ -3,6 +3,7 @@ import { Shield, Eye, Zap, ArrowUpRight } from 'lucide-react';
 import { HOUSES } from '../data/tournamentData';
 import type { House } from '../data/tournamentData';
 import { HouseModal } from './HouseModal';
+import { sound } from '../lib/sound';
 
 interface HousesSectionProps {
   onSelectSchool: (schoolId: string) => void;
@@ -46,24 +47,31 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
 
                 <div>
                   {/* Top card info */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700">
-                          [{house.tag}]
-                        </span>
-                        <h3 className="text-xl font-cyber font-black text-white group-hover:text-cyan-300 transition-colors">
-                          {house.name}
-                        </h3>
-                      </div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <img
+                        src={house.logo}
+                        alt={`Escudo oficial de ${house.name}`}
+                        className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+                        loading="lazy"
+                      />
                     </div>
-
-
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700">
+                        [{house.tag}]
+                      </span>
+                      <h3 className="text-lg sm:text-xl font-cyber font-black text-white group-hover:text-cyan-300 transition-colors mt-1 leading-snug">
+                        {house.name}
+                      </h3>
+                    </div>
                   </div>
+                </div>
 
                 {/* Footer buttons */}
                 <div className="pt-3 border-t border-slate-800/80 flex items-center gap-2">
                   <button
-                    onClick={() => setSelectedHouse(house)}
+                    onClick={() => { sound.open(); setSelectedHouse(house); }}
+                    onMouseEnter={() => sound.hover()}
                     className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 text-xs font-cyber text-slate-200 hover:text-cyan-300 transition-all flex items-center justify-center gap-1.5"
                   >
                     <Eye className="w-3.5 h-3.5" />
@@ -71,7 +79,8 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
                   </button>
 
                   <button
-                    onClick={() => onSelectSchool(house.id)}
+                    onClick={() => { sound.click(); onSelectSchool(house.id); }}
+                    onMouseEnter={() => sound.hover()}
                     className="py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500/20 to-purple-500/20 hover:from-cyan-500 hover:to-purple-500 text-cyan-300 hover:text-black border border-cyan-500/40 text-xs font-cyber font-bold transition-all flex items-center justify-center gap-1 group/btn"
                   >
                     <Zap className="w-3.5 h-3.5" />

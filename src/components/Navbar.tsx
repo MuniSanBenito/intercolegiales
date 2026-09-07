@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Gamepad2, Shield, Calendar, Sparkles, Menu, X, Volume2, VolumeX, UserCheck, MapPin } from 'lucide-react';
+import { Gamepad2, Shield, Sparkles, Menu, X, Volume2, VolumeX, UserCheck, MapPin } from 'lucide-react';
+import { sound, getSoundEnabled, setSoundEnabled as persistSound } from '../lib/sound';
 
 interface NavbarProps {
   onOpenQuiz: () => void;
@@ -9,7 +10,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => getSoundEnabled());
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,31 +20,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const playClickSound = () => {
-    if (!soundEnabled) return;
-    try {
-      const audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.08);
-    } catch {
-      // Audio context might be restricted before interaction
-    }
-  };
+  const playClickSound = () => sound.click();
 
   const navLinks = [
     { name: 'Escuelas', href: '#casas', icon: Shield },
     { name: 'Disciplinas', href: '#disciplinas', icon: Gamepad2 },
     { name: 'Inscripciones', href: '#inscripciones', icon: UserCheck },
-    { name: 'Cronograma', href: '#cronograma', icon: Calendar },
     { name: 'Ubicación', href: '#ubicacion', icon: MapPin, onClick: onOpenLocation },
     { name: 'Test', href: '#test-casa', icon: Sparkles, onClick: onOpenQuiz },
   ];
@@ -102,6 +84,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
                     link.onClick();
                   }
                 }}
+                onMouseEnter={() => sound.hover()}
+                onFocus={() => sound.hover()}
                 className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-300 hover:text-cyan-300 hover:bg-cyan-500/10 rounded-lg border border-transparent hover:border-cyan-500/30 transition-all duration-150"
               >
                 <Icon className="w-4 h-4 text-cyan-400/80" />
@@ -119,6 +103,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
               playClickSound();
               onOpenLocation();
             }}
+            onMouseEnter={() => sound.hover()}
+            onFocus={() => sound.hover()}
             title="Ver ubicación: Parque Vieytes"
             className="p-2.5 rounded-lg bg-slate-900/80 border border-emerald-500/40 text-emerald-300 hover:text-white hover:bg-emerald-500/20 transition-all flex items-center gap-1.5 text-xs font-mono"
           >
@@ -129,8 +115,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
           {/* Sound Toggle */}
           <button
             onClick={() => {
-              setSoundEnabled(!soundEnabled);
-              if (!soundEnabled) playClickSound();
+              const next = !soundEnabled;
+              setSoundEnabled(next);
+              persistSound(next);
+              if (next) sound.click();
             }}
             title={soundEnabled ? 'Silenciar efectos' : 'Activar efectos de sonido'}
             className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
@@ -142,6 +130,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
           <a
             href="#inscripciones"
             onClick={playClickSound}
+            onMouseEnter={() => sound.hover()}
+            onFocus={() => sound.hover()}
             className="relative group px-5 py-2.5 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold text-black bg-gradient-to-r from-cyan-400 via-teal-300 to-amber-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 overflow-hidden inline-flex items-center gap-2"
           >
             <UserCheck className="w-4 h-4 text-black" />
@@ -182,6 +172,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
                     link.onClick();
                   }
                 }}
+                onMouseEnter={() => sound.hover()}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-200 hover:bg-cyan-500/15 hover:text-cyan-300 border border-slate-800"
               >
                 <Icon className="w-5 h-5 text-cyan-400" />
@@ -197,6 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
                 setMobileMenuOpen(false);
                 onOpenLocation();
               }}
+              onMouseEnter={() => sound.hover()}
               className="w-full py-3 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 text-center flex items-center justify-center gap-2"
             >
               <MapPin className="w-4 h-4 text-emerald-400" />
@@ -209,6 +201,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
                 playClickSound();
                 setMobileMenuOpen(false);
               }}
+              onMouseEnter={() => sound.hover()}
               className="w-full py-3 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold text-black bg-gradient-to-r from-cyan-400 to-amber-300 text-center flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/30"
             >
               <UserCheck className="w-4 h-4" />

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Sparkles, Shield, Flame, Zap, Trophy, ChevronRight, Terminal, Clock, Calendar, MapPin } from 'lucide-react';
+import { Play, Shield, Zap, Trophy, ChevronRight, Terminal, Clock, Calendar, MapPin } from 'lucide-react';
+import { sound } from '../lib/sound';
 
 interface HeroProps {
   onOpenQuiz: () => void;
   onOpenLocation: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenQuiz, onOpenLocation }) => {
+export const Hero: React.FC<HeroProps> = ({  onOpenLocation }) => {
   // Countdown to October 5, 2026 at 10:00 AM
   const [timeLeft, setTimeLeft] = useState({
     days: 32,
@@ -94,6 +95,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuiz, onOpenLocation }) => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
           <a
             href="#inscripciones"
+            onClick={() => sound.click()}
+            onMouseEnter={() => sound.hover()}
             className="w-full sm:w-auto px-8 py-4 rounded-xl font-cyber text-sm font-black uppercase tracking-widest text-black bg-gradient-to-r from-cyan-400 via-teal-300 to-amber-300 shadow-xl shadow-cyan-500/30 hover:shadow-cyan-400/60 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 group"
           >
             <Zap className="w-5 h-5 text-black group-hover:rotate-12 transition-transform" />
@@ -103,23 +106,19 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuiz, onOpenLocation }) => {
 
           {/* Sede Location Button */}
           <button
-            onClick={onOpenLocation}
+            onClick={() => { sound.open(); onOpenLocation(); }}
+            onMouseEnter={() => sound.hover()}
             className="w-full sm:w-auto px-6 py-4 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 hover:border-emerald-400 shadow-lg shadow-emerald-950/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group"
           >
             <MapPin className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
             <span>Ver Ubicación (Parque Vieytes)</span>
           </button>
 
-          <button
-            onClick={onOpenQuiz}
-            className="w-full sm:w-auto px-6 py-4 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold text-cyan-300 bg-slate-900/80 hover:bg-slate-800 border border-cyan-500/40 hover:border-cyan-400 shadow-lg shadow-purple-950/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group"
-          >
-            <Sparkles className="w-4 h-4 text-purple-400 group-hover:rotate-45 transition-transform" />
-            <span>Test de Afinidad</span>
-          </button>
 
           <a
             href="#disciplinas"
+            onClick={() => sound.click()}
+            onMouseEnter={() => sound.hover()}
             className="w-full sm:w-auto px-6 py-4 rounded-xl font-cyber text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white bg-slate-950/60 hover:bg-slate-900 border border-slate-700/60 transition-colors flex items-center justify-center gap-2"
           >
             <Play className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400" />
@@ -190,7 +189,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuiz, onOpenLocation }) => {
         </div>
 
         {/* Floating Quick Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-slate-900/60 backdrop-blur-md rounded-xl p-4 border border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300 flex items-center gap-3.5 group">
             <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
               <Shield className="w-5 h-5" />
@@ -198,16 +197,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuiz, onOpenLocation }) => {
             <div>
               <div className="text-xl font-cyber font-bold text-white">5 Escuelas</div>
               <div className="text-xs font-mono text-slate-400">Delegaciones Oficiales</div>
-            </div>
-          </div>
-
-          <div className="bg-slate-900/60 backdrop-blur-md rounded-xl p-4 border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 flex items-center gap-3.5 group">
-            <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
-              <Flame className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xl font-cyber font-bold text-white">990+</div>
-              <div className="text-xs font-mono text-slate-400">Estudiantes Atletas</div>
             </div>
           </div>
 

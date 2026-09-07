@@ -4,7 +4,6 @@ import { Hero } from './components/Hero';
 import { HousesSection } from './components/HousesSection';
 import { DisciplinesSection } from './components/DisciplinesSection';
 import { RegistrationSection } from './components/RegistrationSection';
-import { ScheduleSection } from './components/ScheduleSection';
 import { ScoreboardSection } from './components/ScoreboardSection';
 import { InteractiveQuiz } from './components/InteractiveQuiz';
 import { LocationModal } from './components/LocationModal';
@@ -55,9 +54,6 @@ export function App() {
 
         {/* Dedicated Official Registration Form */}
         <RegistrationSection />
-
-        {/* Event Timeline / Roadmap Stages */}
-        <ScheduleSection />
 
         {/* Live Scoreboard & Rankings */}
         <ScoreboardSection />

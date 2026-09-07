@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, MapPin, ExternalLink, Navigation, CheckCircle2, ShieldCheck, Bus, Car } from 'lucide-react';
+import { sound } from '../lib/sound';
 
 interface LocationModalProps {
   isOpen: boolean;
@@ -36,7 +37,8 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose })
         <button
           type="button"
           aria-label="Cerrar ubicación"
-          onClick={onClose}
+          onClick={() => { sound.close(); onClose(); }}
+          onMouseEnter={() => sound.hover()}
           className="absolute top-5 right-5 p-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 hover:text-white hover:border-cyan-400 transition-colors"
         >
           <X className="w-5 h-5" />
@@ -135,6 +137,8 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose })
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => sound.open()}
+            onMouseEnter={() => sound.hover()}
             className="w-full sm:flex-1 py-3.5 rounded-xl font-cyber text-xs uppercase tracking-widest font-black text-black bg-gradient-to-r from-cyan-400 via-teal-300 to-amber-300 hover:shadow-lg hover:shadow-cyan-400/40 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
           >
             <ExternalLink className="w-4 h-4 text-black" />
@@ -142,7 +146,8 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose })
           </a>
 
           <button
-            onClick={onClose}
+            onClick={() => { sound.close(); onClose(); }}
+            onMouseEnter={() => sound.hover()}
             className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white text-xs font-mono uppercase tracking-wider transition-colors"
           >
             Cerrar
