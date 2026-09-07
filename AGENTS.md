@@ -266,3 +266,11 @@ Debe poder escribir instrucciones como:
 > Agregá un footer profesional.
 
 El agente debe interpretar estas instrucciones y realizar los cambios directamente en el proyecto.
+
+---
+
+## Flujo de aprendizaje con IA
+
+Para que los estudiantes puedan aprender mientras construyen, utilizar la skill `.devin/skills/intercolegiales-learning/SKILL.md` cuando el pedido implique explicar, modificar o revisar la landing.
+
+Cada cambio debe ser pequeño y conservar el trabajo existente. La respuesta debe indicar qué archivos se modificaron, qué concepto se aprende, cómo verificarlo en celular y escritorio, y sugerir un prompt siguiente. La guía de prompts está en `docs/GUIA-APRENDIZAJE.md`.

@@ -16,7 +16,9 @@ Use this skill when implementing or modifying responsive layouts, breakpoints, o
 - **Mobile-first**: base styles target phones, `sm:`/`md:`/`lg:`/`xl:` augment upward.
 - Container: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` — uniform in every section.
 - Horizontal overflow prevented via `overflow-x: hidden` on `body` (index.html) and App root div.
-- No elements may cause horizontal scroll on mobile — test at 375px width mentally.
+- No elements may cause horizontal scroll on mobile — test at 375px width mentally and, when possible, verify in the browser preview.
+- Check touch target size, visible keyboard focus, modal Escape behavior, and `prefers-reduced-motion` for every mobile interaction.
+- Do not use `animate-in`, `fade-in`, `slide-in-from-*`, or `zoom-in-*` unless the project installs the animation plugin; use classes defined in `src/index.css` instead.
 
 ## Breakpoint Usage
 

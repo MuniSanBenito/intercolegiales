@@ -59,7 +59,6 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
 
 
                   </div>
-                </div>
 
                 {/* Footer buttons */}
                 <div className="pt-3 border-t border-slate-800/80 flex items-center gap-2">

@@ -203,11 +203,11 @@ export const RegistrationSection: React.FC = () => {
                   <p className="text-[11px] font-mono text-slate-500 mb-2">
                     Subí una foto o PDF de tu constancia de alumno regular para verificar tu identidad.
                   </p>
-                  <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                  <label className={`flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
                     constanciaFile
                       ? 'border-emerald-400/60 bg-emerald-500/5'
                       : 'border-slate-700 bg-slate-950/80 hover:border-pink-400/50 hover:bg-pink-500/5'
-                  }">
+                  }`}>
                     <div className="flex flex-col items-center justify-center pt-2 pb-1">
                       {constanciaFile ? (
                         <>
@@ -250,7 +250,7 @@ export const RegistrationSection: React.FC = () => {
               </form>
             ) : (
               /* Success confirmation within form block */
-              <div className="text-center py-6 animate-in zoom-in-95 duration-300">
+              <div className="text-center py-6 animate-zoom-in">
                 <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-400 flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="w-9 h-9" />
                 </div>
@@ -302,7 +302,6 @@ export const RegistrationSection: React.FC = () => {
                     {selectedSchool.name}
                     </h4>
                   </div>
-                </div>
 
                 <div className="text-right">
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-400/10 text-amber-400 border border-amber-400/30">

@@ -153,8 +153,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
         {/* Mobile menu trigger */}
         <div className="flex items-center gap-2 md:hidden">
           <button
+            type="button"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            aria-label={mobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-cyan-400"
+            className="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-cyan-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -163,7 +167,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#0a0b12]/95 backdrop-blur-xl border-b border-cyan-500/30 px-4 pt-3 pb-6 space-y-2 animate-in slide-in-from-top-4 duration-200">
+        <div id="mobile-navigation" className="md:hidden bg-[#0a0b12]/95 backdrop-blur-xl border-b border-cyan-500/30 px-4 pt-3 pb-6 space-y-2 animate-slide-down">
           {navLinks.map((link) => {
             const Icon = link.icon;
             return (

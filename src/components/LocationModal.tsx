@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, MapPin, ExternalLink, Navigation, CheckCircle2, ShieldCheck, Bus, Car } from 'lucide-react';
 
 interface LocationModalProps {
@@ -7,15 +7,35 @@ interface LocationModalProps {
 }
 
 export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=Parque+Vieytes+San+Benito+Entre+Rios';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-[#0c0e1a] border border-cyan-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-cyan-950/60 max-h-[92vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="relative w-full max-w-2xl bg-[#0c0e1a] border border-cyan-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-cyan-950/60 max-h-[92vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="location-modal-title">
         {/* Close Button */}
         <button
+          type="button"
+          aria-label="Cerrar ubicación"
           onClick={onClose}
           className="absolute top-5 right-5 p-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 hover:text-white hover:border-cyan-400 transition-colors"
         >
@@ -36,7 +56,7 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose })
                 5 AL 9 OCTUBRE 2026
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-cyber font-black text-white">
+            <h2 id="location-modal-title" className="text-2xl sm:text-3xl font-cyber font-black text-white">
               PARQUE VIEYTES
             </h2>
             <p className="text-xs sm:text-sm font-mono text-slate-400">

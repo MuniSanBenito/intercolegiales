@@ -102,7 +102,7 @@ export const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ onSelectHouse 
             </div>
           ) : (
             /* Result Card / Gamer Badge */
-            <div className="text-center animate-in zoom-in-95 duration-300">
+            <div className="text-center animate-zoom-in">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold uppercase mb-4">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>AFINIDAD DEL 98.7% ENCONTRADA</span>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, ChevronRight, Zap } from 'lucide-react';
 import type { House } from '../data/tournamentData';
 
@@ -9,13 +9,32 @@ interface HouseModalProps {
 }
 
 export const HouseModal: React.FC<HouseModalProps> = ({ house, onClose, onJoinHouse }) => {
+  useEffect(() => {
+    if (!house) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [house, onClose]);
+
   if (!house) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-[#0d0e1a] border border-cyan-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-cyan-950/60 max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="relative w-full max-w-md bg-[#0d0e1a] border border-cyan-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-cyan-950/60 max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="house-modal-title">
         {/* Close Button */}
         <button
+          type="button"
+          aria-label="Cerrar escuela"
           onClick={onClose}
           className="absolute top-5 right-5 p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 hover:text-white hover:border-cyan-400 transition-colors"
         >
@@ -27,7 +46,7 @@ export const HouseModal: React.FC<HouseModalProps> = ({ house, onClose, onJoinHo
           <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
             [{house.tag}]
           </span>
-          <h2 className="text-2xl sm:text-3xl font-cyber font-black text-white">
+          <h2 id="house-modal-title" className="text-2xl sm:text-3xl font-cyber font-black text-white">
             {house.name}
           </h2>
         </div>

@@ -11,7 +11,7 @@
 **Plataforma Oficial del Torneo Deportivo, Cultural y Tecnológico Intercolegial**  
 *Sede Central: Parque Vieytes — Ciudad de San Benito, Entre Ríos, Argentina*
 
-[Explorar Secciones](#-características-y-secciones) • [Instituciones](#-escuelas-participantes) • [Instalación](#-instalación-y-desarrollo) • [Créditos y Pasantías](#-proyecto-educativo-y-comunitario)
+[Explorar Secciones](#-características-y-secciones) • [Instituciones](#-escuelas-participantes) • [Instalación](#-instalación-y-desarrollo) • [Guía de Aprendizaje](#-guía-de-aprendizaje-con-ia) • [Créditos y Pasantías](#-proyecto-educativo-y-comunitario)
 
 ---
 
@@ -126,7 +126,15 @@ intercolegiales/
 
 ---
 
-## 🤝 Proyecto Educativo y Comunitario
+## � Guía de Aprendizaje con IA
+
+El proyecto incluye una guía práctica para que los estudiantes puedan escribir mejores prompts, entender qué archivos modifica la IA y verificar cada cambio en celular y computadora.
+
+👉 [Leer la Guía de Aprendizaje](docs/GUIA-APRENDIZAJE.md)
+
+---
+
+## �🤝 Proyecto Educativo y Comunitario
 
 Este desarrollo es el resultado del esfuerzo conjunto y las ganas de innovar de la juventud de nuestra ciudad:
 

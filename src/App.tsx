@@ -13,7 +13,7 @@ import { Footer } from './components/Footer';
 export function App() {
   const [locationOpen, setLocationOpen] = useState(false);
 
-  const handleScrollToInscripciones = (_targetId?: string) => {
+  const handleScrollToInscripciones = () => {
     const el = document.getElementById('inscripciones');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
@@ -28,7 +28,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#08090e] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
+    <div className="min-h-screen overflow-x-hidden bg-[#08090e] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
       {/* Fixed Cyber Navbar */}
       <Navbar
         onOpenQuiz={handleScrollToQuiz}
