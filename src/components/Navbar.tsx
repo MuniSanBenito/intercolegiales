@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Gamepad2, Shield, Sparkles, Menu, X, Volume2, VolumeX, UserCheck, MapPin } from 'lucide-react';
+import { Gamepad2, Shield, Menu, X, Volume2, VolumeX, UserCheck, MapPin } from 'lucide-react';
 import { sound, getSoundEnabled, setSoundEnabled as persistSound } from '../lib/sound';
 
 interface NavbarProps {
-  onOpenQuiz: () => void;
   onOpenLocation: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => getSoundEnabled());
@@ -27,7 +26,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onOpenLocation }) =>
     { name: 'Disciplinas', href: '#disciplinas', icon: Gamepad2 },
     { name: 'Inscripciones', href: '#inscripciones', icon: UserCheck },
     { name: 'Ubicación', href: '#ubicacion', icon: MapPin, onClick: onOpenLocation },
-    { name: 'Test', href: '#test-casa', icon: Sparkles, onClick: onOpenQuiz },
   ];
 
   return (

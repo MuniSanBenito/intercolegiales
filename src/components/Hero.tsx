@@ -3,11 +3,10 @@ import { Play, Shield, Zap, Trophy, ChevronRight, Terminal, Clock, Calendar, Map
 import { sound } from '../lib/sound';
 
 interface HeroProps {
-  onOpenQuiz: () => void;
   onOpenLocation: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({  onOpenLocation }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
   // Countdown to October 5, 2026 at 10:00 AM
   const [timeLeft, setTimeLeft] = useState({
     days: 32,

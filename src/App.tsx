@@ -5,7 +5,6 @@ import { HousesSection } from './components/HousesSection';
 import { DisciplinesSection } from './components/DisciplinesSection';
 import { RegistrationSection } from './components/RegistrationSection';
 import { ScoreboardSection } from './components/ScoreboardSection';
-import { InteractiveQuiz } from './components/InteractiveQuiz';
 import { LocationModal } from './components/LocationModal';
 import { Footer } from './components/Footer';
 
@@ -19,18 +18,10 @@ export function App() {
     }
   };
 
-  const handleScrollToQuiz = () => {
-    const el = document.getElementById('test-casa');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#08090e] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
       {/* Fixed Cyber Navbar */}
       <Navbar
-        onOpenQuiz={handleScrollToQuiz}
         onOpenLocation={() => setLocationOpen(true)}
       />
 
@@ -38,7 +29,6 @@ export function App() {
       <main>
         {/* Hero with Countdown, Location & HUD Stats */}
         <Hero
-          onOpenQuiz={handleScrollToQuiz}
           onOpenLocation={() => setLocationOpen(true)}
         />
 
@@ -58,10 +48,6 @@ export function App() {
         {/* Live Scoreboard & Rankings */}
         <ScoreboardSection />
 
-        {/* Interactive School Affinity Quiz */}
-        <InteractiveQuiz
-          onSelectHouse={handleScrollToInscripciones}
-        />
       </main>
 
       {/* Location Modal */}
