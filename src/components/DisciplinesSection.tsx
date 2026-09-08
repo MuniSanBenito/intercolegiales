@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, MotionConfig } from 'motion/react';
 import { Gamepad2, MapPin, Calendar, Search, Swords, Zap, Trophy, Music } from 'lucide-react';
 import { DISCIPLINES } from '../data/tournamentData';
 import { sound } from '../lib/sound';
@@ -7,6 +8,16 @@ import { sound } from '../lib/sound';
 interface DisciplinesSectionProps {
   onRegisterDiscipline: (disciplineName: string) => void;
 }
+
+const disciplineContainerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+const disciplineItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' as const } },
+};
 
 export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegisterDiscipline }) => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'deportes' | 'cultural' | 'futbol' | 'voley' | 'atletismo'>('all');
@@ -29,10 +40,16 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
   });
 
   return (
-    <section id="disciplinas" className="relative py-24 bg-[#08090e]">
+    <MotionConfig reducedMotion="user">
+      <section id="disciplinas" className="relative py-24 bg-[#08090e]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-cyber tracking-widest uppercase mb-3">
             <Trophy className="w-3.5 h-3.5 text-amber-400" />
             <span>DISCIPLINAS DEPORTIVAS & ÁREA CULTURAL 2026</span>
@@ -44,7 +61,7 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
             Explorá el cuadro completo de deportes físicos de campo y las competencias del área cultural, 
             mente y gaming para la tabla general de posiciones.
           </p>
-        </div>
+        </motion.div>
 
         {/* Filters & Search Box */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-10">
@@ -133,12 +150,19 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
         </div>
 
         {/* Disciplines Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          variants={disciplineContainerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDisciplines.map((item) => {
             const isCultural = item.type === 'cultural';
             return (
-              <div
+              <motion.div
                 key={item.id}
+                variants={disciplineItemVariants}
+                whileHover={{ y: -4, scale: 1.015 }}
                 className={`rounded-3xl border p-6 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 hover:shadow-2xl ${
                   isCultural
                     ? 'bg-[#100d1d]/95 border-purple-500/30 hover:border-purple-400 shadow-purple-950/20'
@@ -208,10 +232,10 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
                   <Zap className="w-3.5 h-3.5" />
                   <span>Inscribirme en esta Disciplina</span>
                 </button>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {filteredDisciplines.length === 0 && (
           <div className="text-center py-16 bg-slate-900/30 rounded-3xl border border-slate-800 max-w-xl mx-auto">
@@ -222,6 +246,7 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
           </div>
         )}
       </div>
-    </section>
+      </section>
+    </MotionConfig>
   );
 };

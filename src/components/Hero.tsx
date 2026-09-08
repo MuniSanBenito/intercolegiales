@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, MotionConfig } from 'motion/react';
 import { Play, Shield, Zap, Trophy, ChevronRight, Terminal, Clock, Calendar, MapPin } from 'lucide-react';
 import { sound } from '../lib/sound';
 
@@ -37,16 +38,25 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
   }, []);
 
   return (
-    <section className="relative min-h-screen pt-28 pb-16 lg:pt-36 lg:pb-24 flex flex-col justify-center overflow-hidden">
+    <MotionConfig reducedMotion="user">
+      <section className="relative min-h-screen pt-28 pb-16 lg:pt-36 lg:pb-24 flex flex-col justify-center overflow-hidden">
       {/* Background Cyber Grid & Glow Orbs */}
       <div className="absolute inset-0 cyber-grid-bg pointer-events-none opacity-40"></div>
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-tr from-cyan-600/20 via-purple-600/20 to-pink-600/10 blur-[130px] rounded-full pointer-events-none -z-10 animate-pulse-glow"></div>
+      <motion.div
+        animate={{ scale: [1, 1.04, 1], opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-tr from-cyan-600/20 via-purple-600/20 to-pink-600/10 blur-[130px] rounded-full pointer-events-none -z-10"
+      />
       <div className="absolute -bottom-10 -left-10 w-96 h-96 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
       <div className="absolute top-1/3 -right-10 w-96 h-96 bg-purple-500/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Top Status HUD Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.05 }}
+          className="flex flex-wrap items-center justify-center gap-3 mb-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/40 shadow-lg shadow-cyan-500/20 backdrop-blur-md">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -66,10 +76,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
             <span>SEDE: PARQUE VIEYTES (SAN BENITO)</span>
             <ChevronRight className="w-3 h-3 text-emerald-400 opacity-70 group-hover:translate-x-0.5 transition-transform" />
           </button>
-        </div>
+        </motion.div>
 
         {/* Main Title & Glitch Heading */}
-        <div className="text-center max-w-4xl mx-auto mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="text-center max-w-4xl mx-auto mb-8">
           <div className="flex items-center justify-center gap-3 text-xs sm:text-sm font-cyber font-bold tracking-[0.25em] uppercase text-cyan-400 mb-2">
             <span>5 ESCUELAS EN COMPETENCIA</span>
             <span>•</span>
@@ -88,10 +102,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
             Del <strong className="text-cyan-300 font-bold">Lunes 5 al Viernes 9 de Octubre (10:00 a 15:00 hs)</strong> en el <strong className="text-emerald-300 font-bold">Parque Vieytes</strong>. 
             El gran choque entre <span className="text-white font-semibold">San Benito Abad</span>, <span className="text-white font-semibold">San Alberto Hurtado</span>, <span className="text-white font-semibold">Escuela Zuloaga</span>, <span className="text-white font-semibold">Escuela Evita</span> y la <span className="text-white font-semibold">ENET 18</span>.
           </p>
-        </div>
+        </motion.div>
 
         {/* Interactive Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-fade-in">
           <a
             href="#inscripciones"
             onClick={() => sound.click()}
@@ -126,7 +140,11 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
         </div>
 
         {/* Countdown HUD Display */}
-        <div className="max-w-3xl mx-auto mb-16 p-1 rounded-2xl bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-amber-500/30 backdrop-blur-xl">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="max-w-3xl mx-auto mb-16 p-1 rounded-2xl bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-amber-500/30 backdrop-blur-xl">
           <div className="bg-[#0b0c16]/90 rounded-[14px] p-4 sm:p-6 border border-slate-800">
             <div className="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 mb-4 gap-2">
               <div className="flex items-center gap-2">
@@ -185,10 +203,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Floating Quick Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.65 }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-slate-900/60 backdrop-blur-md rounded-xl p-4 border border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300 flex items-center gap-3.5 group">
             <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
               <Shield className="w-5 h-5" />
@@ -218,8 +240,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
               <div className="text-xs font-mono text-slate-400">Intercolegial 2026</div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </section>
+      </section>
+    </MotionConfig>
   );
 };

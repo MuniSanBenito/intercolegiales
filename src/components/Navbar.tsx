@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, MotionConfig } from 'motion/react';
 import { Gamepad2, Shield, Menu, X, Volume2, VolumeX, UserCheck, MapPin } from 'lucide-react';
 import { sound, getSoundEnabled, setSoundEnabled as persistSound } from '../lib/sound';
 
@@ -29,7 +30,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
   ];
 
   return (
-    <header
+    <MotionConfig reducedMotion="user">
+      <motion.header
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-[#08090e]/90 backdrop-blur-md border-b border-cyan-500/20 py-3 shadow-lg shadow-cyan-950/20'
@@ -208,6 +213,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
           </div>
         </div>
       )}
-    </header>
+      </motion.header>
+    </MotionConfig>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, MotionConfig } from 'motion/react';
 import { Shield, Eye, Zap, ArrowUpRight } from 'lucide-react';
 import { HOUSES } from '../data/tournamentData';
 import type { House } from '../data/tournamentData';
@@ -13,13 +14,19 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
   const [selectedHouse, setSelectedHouse] = useState<House | null>(null);
 
   return (
-    <section id="casas" className="relative py-20 bg-[#090a12] border-t border-b border-cyan-500/10">
+    <MotionConfig reducedMotion="user">
+      <section id="casas" className="relative py-20 bg-[#090a12] border-t border-b border-cyan-500/10">
       {/* Background accents */}
       <div className="absolute inset-0 cyber-dots-bg opacity-30 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-cyber tracking-widest uppercase mb-3">
             <Shield className="w-3.5 h-3.5" />
             <span>DELEGACIONES & ESCUELAS PARTICIPANTES</span>
@@ -30,14 +37,19 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
           <p className="text-slate-400 text-sm sm:text-base">
             Conocé a las 5 instituciones que competirán del 5 al 9 de Octubre (10:00 a 15:00 hs) por la Copa San Benito 2026.
           </p>
-        </div>
+        </motion.div>
 
         {/* Houses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {HOUSES.map((house) => {
+          {HOUSES.map((house, index) => {
             return (
-              <div
+              <motion.div
                 key={house.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.03, y: -5 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.55, delay: index * 0.08, ease: 'easeOut' }}
                 className="group relative bg-[#0d0f1c]/90 rounded-2xl border border-slate-800 hover:border-cyan-400/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-950/40 flex flex-col justify-between"
               >
                 {/* Glow bar on top of the card */}
@@ -88,7 +100,7 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
                     <ArrowUpRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                   </button>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -102,6 +114,7 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
           onSelectSchool(houseId);
         }}
       />
-    </section>
+      </section>
+    </MotionConfig>
   );
 };

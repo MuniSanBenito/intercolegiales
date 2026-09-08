@@ -1,10 +1,16 @@
 import React from 'react';
+import { motion, MotionConfig } from 'motion/react';
 import { Gamepad2, ShieldAlert, MapPin } from 'lucide-react';
 import { sound } from '../lib/sound';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="relative bg-[#06070a] border-t border-cyan-500/20 pt-16 pb-12 text-slate-400 overflow-hidden">
+    <MotionConfig reducedMotion="user">
+      <motion.footer
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6 }} className="relative bg-[#06070a] border-t border-cyan-500/20 pt-16 pb-12 text-slate-400 overflow-hidden">
       {/* Glow Effect */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-cyan-500/5 blur-3xl pointer-events-none"></div>
 
@@ -83,6 +89,7 @@ export const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-    </footer>
+      </motion.footer>
+    </MotionConfig>
   );
 };

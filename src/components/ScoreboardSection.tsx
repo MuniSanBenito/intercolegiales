@@ -1,13 +1,20 @@
+import { motion, MotionConfig } from 'motion/react';
 import { Trophy, Clock, School } from 'lucide-react';
 import { HOUSES } from '../data/tournamentData';
 import { sound } from '../lib/sound';
 
 export function ScoreboardSection() {
   return (
-    <section id="posiciones" className="py-16 md:py-24 relative">
+    <MotionConfig reducedMotion="user">
+      <section id="posiciones" className="py-16 md:py-24 relative">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono tracking-widest uppercase mb-4">
             <Trophy className="w-3.5 h-3.5" />
             Tabla de Posiciones
@@ -21,10 +28,15 @@ export function ScoreboardSection() {
           <p className="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
             Seguí el ranking de las 5 escuelas en competencia. Los puntajes se actualizarán según los resultados de cada disciplina.
           </p>
-        </div>
+        </motion.div>
 
         {/* Pending Notice */}
-        <div className="bg-slate-900/60 backdrop-blur-md rounded-2xl border border-amber-500/20 p-6 md:p-8 mb-8 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.12 }}
+          className="bg-slate-900/60 backdrop-blur-md rounded-2xl border border-amber-500/20 p-6 md:p-8 mb-8 text-center">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/30 mb-4">
             <Clock className="w-7 h-7 text-amber-400 animate-pulse" />
           </div>
@@ -35,13 +47,17 @@ export function ScoreboardSection() {
             Las posiciones se definirán a medida que se realicen las actividades del torneo.
             ¡Volvé a consultar para ver los resultados en vivo!
           </p>
-        </div>
+        </motion.div>
 
         {/* Schools List - Alphabetical */}
         <div className="space-y-3">
           {HOUSES.map((house, index) => (
-            <div
+            <motion.div
               key={house.id}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.45, delay: index * 0.07 }}
               className="relative rounded-xl border bg-slate-950/60 border-slate-800/50 transition-all duration-300 hover:scale-[1.01] hover:border-slate-700/60"
             >
               <div className="flex items-center gap-3 md:gap-4 p-4 md:p-5">
@@ -82,7 +98,7 @@ export function ScoreboardSection() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -98,6 +114,7 @@ export function ScoreboardSection() {
           </a>
         </div>
       </div>
-    </section>
+      </section>
+    </MotionConfig>
   );
 }
