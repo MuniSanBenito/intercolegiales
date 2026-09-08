@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
   const playClickSound = () => sound.click();
 
   const navLinks = [
-    { name: 'Escuelas', href: '#casas', icon: Shield },
+    { name: 'Escuelas', href: '#Escuelas', icon: Shield },
     { name: 'Disciplinas', href: '#disciplinas', icon: Gamepad2 },
     { name: 'Inscripciones', href: '#inscripciones', icon: UserCheck },
     { name: 'Ubicación', href: '#ubicacion', icon: MapPin, onClick: onOpenLocation },

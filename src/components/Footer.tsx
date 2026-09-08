@@ -55,7 +55,7 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm font-mono">
               <li>
-                <a href="#casas" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
+                <a href="#Escuelas" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Las 5 Escuelas
                 </a>
               </li>

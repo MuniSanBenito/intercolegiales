@@ -15,7 +15,7 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
 
   return (
     <MotionConfig reducedMotion="user">
-      <section id="casas" className="relative py-20 bg-[#090a12] border-t border-b border-cyan-500/10">
+      <section id="Escuelas" className="relative py-20 bg-[#090a12] border-t border-b border-cyan-500/10">
       {/* Background accents */}
       <div className="absolute inset-0 cyber-dots-bg opacity-30 pointer-events-none"></div>
 
