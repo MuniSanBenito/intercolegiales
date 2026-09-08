@@ -85,7 +85,7 @@ export const Footer: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 text-slate-300">
             <span>Organizado por</span>
-            <span className="font-cyber font-bold text-cyan-400">San Benito Intercol 2026</span>
+            <span className="font-cyber font-bold text-cyan-400">Municipalidad de San Benito - Deportes 2026</span>
           </div>
         </div>
       </div>
