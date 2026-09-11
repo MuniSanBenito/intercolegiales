@@ -30,13 +30,13 @@ _Sede Central: Parque Vieytes — Ciudad de San Benito, Entre Ríos, Argentina_
 
 El torneo reúne a las delegaciones de las 5 instituciones de educación secundaria de San Benito:
 
-| Identificador | Institución                    | Color Representativo    |
-| :-----------: | :----------------------------- | :---------------------- |
-|    **SBA**    | **San Benito Abad**            | Rojo Fuego & Ámbar      |
-|    **SAH**    | **San Alberto Hurtado**        | Cyan Eléctrico & Índigo |
-|    **EZU**    | **Escuela Zuloaga**            | Ámbar & Naranja Dorado  |
-|    **EVA**    | **Escuela Evita**              | Púrpura & Fucsia Neón   |
-|    **E18**    | **Escuela Técnica ENET N° 18** | Verde Esmeralda & Teal  |
+| Identificador | Institución                   | Color Representativo    |
+| :-----------: | :---------------------------- | :---------------------- |
+|    **SBA**    | **San Benito Abad**           | Rojo Fuego & Ámbar      |
+|    **SAH**    | **San Alberto Hurtado**       | Cyan Eléctrico & Índigo |
+|    **EZU**    | **Escuela Zuloaga**           | Ámbar & Naranja Dorado  |
+|    **EVA**    | **Escuela Evita**             | Púrpura & Fucsia Neón   |
+|    **E18**    | **Escuela Técnica EET N° 18** | Verde Esmeralda & Teal  |
 
 ---
 

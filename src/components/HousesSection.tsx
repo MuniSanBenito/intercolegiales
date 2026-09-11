@@ -32,7 +32,7 @@ export const HousesSection: React.FC<HousesSectionProps> = ({ onSelectSchool }) 
             <span>DELEGACIONES & ESCUELAS PARTICIPANTES</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-black font-cyber text-white tracking-tight uppercase mb-4">
-            LAS 5 ESCUELAS DEL <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">TORNEO</span>
+            LAS 5 ESCUELAS DE LA <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">COMPETENCIA</span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
             Conocé a las 5 instituciones que competirán del 5 al 9 de Octubre (10:00 a 15:00 hs) por la Copa San Benito 2026.

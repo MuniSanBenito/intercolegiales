@@ -48,8 +48,8 @@ export const RegistrationSection: React.FC = () => {
           </div>
           <div className="rounded-2xl border border-emerald-500/20 bg-slate-900/70 p-5 backdrop-blur-md">
             <MapPin className="mb-4 h-6 w-6 text-emerald-400" />
-            <h3 className="mb-2 font-cyber text-sm font-bold text-white">Sede confirmada</h3>
-            <p className="text-sm leading-relaxed text-slate-400">Parque Vieytes, San Benito. La coordinación informará los detalles.</p>
+            <h3 className="mb-2 font-cyber text-sm font-bold text-white">Sedes confirmadas</h3>
+            <p className="text-sm leading-relaxed text-slate-400">Parque Vieytes y Complejo Oscar Chapino (Av. Jorge Newbery 5900), San Benito.</p>
           </div>
           <div className="rounded-2xl border border-amber-500/20 bg-slate-900/70 p-5 backdrop-blur-md">
             <CheckCircle2 className="mb-4 h-6 w-6 text-amber-400" />

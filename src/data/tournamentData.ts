@@ -79,8 +79,8 @@ export const HOUSES: House[] = [
     accentBg: 'bg-purple-500/10',
   },
   {
-    id: 'enet-18',
-    name: 'Escuela Técnica ENET N° 18',
+    id: 'eet-18',
+    name: 'Escuela Técnica EET N° 18',
     tag: 'E18',
     logo: '/logos/enet-18.png',
     color: 'from-emerald-500 via-teal-500 to-cyan-600',
@@ -94,17 +94,17 @@ export const DISCIPLINES: Discipline[] = [
   // --- COMPETENCIAS DEPORTIVAS ---
   {
     id: 'futbol-femenino',
-    name: 'Fútbol Femenino',
+    name: 'Fútbol 9 Femenino',
     type: 'deportivo',
     typeLabel: 'Área Deportiva',
     category: 'futbol',
     categoryLabel: 'Fútbol',
-    format: 'Fútbol Femenino (Cancha Sintética)',
+    format: 'Fútbol Femenino',
     iconName: 'trophy',
     xpReward: 550,
-    location: 'Parque Vieytes - Cancha Sintética',
-    rulesSummary: 'Partidos de fútbol femenino entre delegaciones escolares. Se destaca la dinámica colectiva, los pases rápidos y la definición al arco para sumar puntos para la escuela.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    location: 'Complejo Oscar Chapino',
+    rulesSummary: 'Partidos de fútbol femenino de duración de 10min de corrido, lista de buenafe de 12 jugadoras.',
+    dates: 'Martes 6 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   },
   {
@@ -114,12 +114,12 @@ export const DISCIPLINES: Discipline[] = [
     typeLabel: 'Área Deportiva',
     category: 'futbol',
     categoryLabel: 'Fútbol',
-    format: 'Fútbol 11 Masculino (Cancha de Campo)',
+    format: 'Fútbol 11 Masculino',
     iconName: 'trophy',
     xpReward: 600,
-    location: 'Parque Vieytes - Estadio de Campo',
-    rulesSummary: 'Enfrentamientos tradicionales de fútbol 11 en cancha reglamentaria, donde cada equipo compite mediante el juego colectivo, la táctica y el despliegue físico.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    location: 'Complejo Oscar Chapino',
+    rulesSummary: 'Enfrentamientos tradicionales de fútbol 11 con duracion de 10min de corrido y lista de buenafe de 18 jugadores.',
+    dates: 'Martes 6 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   },
   {
@@ -133,8 +133,8 @@ export const DISCIPLINES: Discipline[] = [
     iconName: 'activity',
     xpReward: 500,
     location: 'Parque Vieytes - Gimnasio Techado',
-    rulesSummary: 'Partidos de vóley femenino en gimnasio techado, con dinámica basada en la recepción, la comunicación en equipo y los remates sobre la red.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    rulesSummary: 'Partidos de vóley femenino con duracion de 10min y lista de buenafe de 9 jugadoras.',
+    dates: 'Miercoles 7 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   },
   {
@@ -148,8 +148,8 @@ export const DISCIPLINES: Discipline[] = [
     iconName: 'activity',
     xpReward: 500,
     location: 'Parque Vieytes - Gimnasio Techado',
-    rulesSummary: 'Encuentros de vóley masculino con foco en la coordinación defensiva, el juego aéreo y la potencia de ataque en la red.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)'
+    rulesSummary: 'Encuentros de vóley masculino con duracion de 10min y lista de buenafe de 9 jugadores.',
+    dates: 'Miercoles 7 de Octubre (10:00 a 15:00 hs)'
   },
   {
     id: 'atletismo-femenino',
@@ -162,8 +162,8 @@ export const DISCIPLINES: Discipline[] = [
     iconName: 'zap',
     xpReward: 480,
     location: 'Parque Vieytes - Pista de Atletismo',
-    rulesSummary: 'Jornadas de atletismo femenino que reúnen carreras de velocidad individual en 100m, pruebas de salto en largo y postas en equipo representativas de cada institución.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    rulesSummary: 'Jornadas de atletismo femenino con carreras de velocidad de 100m, carrera de relevos y maratón de aproximadamente 2km',
+    dates: 'lunes 5 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   },
   {
@@ -177,8 +177,8 @@ export const DISCIPLINES: Discipline[] = [
     iconName: 'zap',
     xpReward: 480,
     location: 'Parque Vieytes - Pista de Atletismo',
-    rulesSummary: 'Competencias de atletismo masculino con carreras de velocidad en pista, pruebas de longitud y carreras de relevos por delegación escolar.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)'
+    rulesSummary: 'Competencias de atletismo masculino con carreras de velocidad de 100m, carrera de relevos y maratón de aproximadamente 2km',
+    dates: 'lunes 5 de Octubre (10:00 a 15:00 hs)'
   },
 
   // --- ÁREA CULTURAL & JUEGOS ---
@@ -192,14 +192,29 @@ export const DISCIPLINES: Discipline[] = [
     format: 'Trivia Escolar por Equipos',
     iconName: 'brain',
     xpReward: 450,
-    location: 'Parque Vieytes - Carpa Cultural Central',
-    rulesSummary: 'Juego de preguntas y respuestas sobre cultura general, historia, música, cine y entretenimiento, donde los estudiantes compiten en equipo sumando puntos por aciertos.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    location: 'Parque Vieytes',
+    rulesSummary: 'Juego de preguntas y respuestas sobre la historia de la ciudad de San Benito, se entregara el material a las instituciones, podrá participar un equipo por escuela, cada equipo puede estar compuesto por 6 integrantes max.',
+    dates: 'Viernes 9 de Octubre (10:00 a 15:00 hs)',
+    isPopular: true
+  },
+{
+    id: 'presentacion_escuelas',
+    name: 'Presentación de Escuelas',
+    type: 'cultural',
+    typeLabel: 'Área Cultural',
+    category: 'cultural',
+    categoryLabel: 'Cultura',
+    format: 'Trivia Escolar por Equipos',
+    iconName: 'brain',
+    xpReward: 450,
+    location: 'Parque Vieytes',
+    rulesSummary: 'Cada institución podrá presentar libremente su identidad y espíritu mediante propuestas creativas como murga, coreografías, disfraces, banderas, canciones o representaciones Cada presentación tendrá un máximo de 3 minutos y deberá ser organizada previamente por cada institución.',
+    dates: 'Viernes 9 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   },
   {
     id: 'truco-trio-mixto',
-    name: 'Truco Trío Mixto',
+    name: 'Truco Mixto',
     type: 'cultural',
     typeLabel: 'Área Cultural',
     category: 'cultural',
@@ -208,13 +223,13 @@ export const DISCIPLINES: Discipline[] = [
     iconName: 'sparkles',
     xpReward: 420,
     location: 'Parque Vieytes - Galería Principal',
-    rulesSummary: 'El tradicional juego de cartas argentino en equipos mixtos de 3 integrantes, combinando picardía, señas, cálculo mental y estrategia colectiva.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    rulesSummary: 'Juego de cartas en equipos mixtos de 3 integrantes, se juega 9 malas y 9 buenas, pica-pica a partir de la 2da vuelta hasta 6 buenas.',
+    dates: 'Jueves 8 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   },
   {
     id: 'ea-sports-fc-26',
-    name: 'EA Sports FC 26',
+    name: 'EA Sports FC 27',
     type: 'cultural',
     typeLabel: 'Área Cultural & Gaming',
     category: 'esports',
@@ -222,9 +237,9 @@ export const DISCIPLINES: Discipline[] = [
     format: 'Torneo en Consolas / Gaming',
     iconName: 'gamepad-2',
     xpReward: 500,
-    location: 'Parque Vieytes - Domo Gamer Lounge',
-    rulesSummary: 'Torneo del simulador de fútbol en consola, donde los representantes gamer de cada escuela se enfrentan en partidos directos en pantalla grande.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    location: 'Bibloteca municipal - Punto digital',
+    rulesSummary: 'Torneo del simulador de fútbol, donde los representantes gamer de cada escuela se enfrentan en partidos directos,max 3 participantes por institución.',
+    dates: 'Jueves 8 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   },
   {
@@ -237,9 +252,39 @@ export const DISCIPLINES: Discipline[] = [
     format: 'Escenario Abierto y Artístico',
     iconName: 'sparkles',
     xpReward: 650,
-    location: 'Parque Vieytes - Anfiteatro al Aire Libre',
-    rulesSummary: 'Espacio de expresión artística y cultural donde los estudiantes muestran sus habilidades en canto, baile, bandas musicales, teatro y expresiones creativas.',
-    dates: '5 al 9 de Octubre (10:00 a 15:00 hs)',
+    location: 'Parque Vieytes.',
+    rulesSummary: 'Espacio de expresión artística y cultural donde los estudiantes muestran sus habilidades en canto, baile, bandas musicales, teatro y expresiones creativas. Se tendra en cuenta la cantidad de participantes, escenografía, indumentaria y originalidad.',
+    dates: 'Viernes 9 de Octubre (10:00 a 15:00 hs)',
+    isPopular: true
+  },
+  {
+    id: 'desfile',
+    name: 'Desfile',
+    type: 'cultural',
+    typeLabel: 'Área Cultural',
+    category: 'cultural',
+    categoryLabel: 'Cultura',
+    format: 'Escenario Abierto y Artístico',
+    iconName: 'sparkles',
+    xpReward: 650,
+    location: 'Parque Vieytes.',
+    rulesSummary: 'Desfile de rey y reina - princesa y principe. Deberán participar 4 alumnos por escuela, 2 de C.B.C y 2 C.B.O, el desfile tendrá que tener presentador y será una sola pasada.',
+    dates: 'Viernes 9 de Octubre (10:00 a 15:00 hs)',
+    isPopular: true
+  },
+  {
+    id: 'desfile-mascota',
+    name: 'Desfile de Mascotas/disfraces',
+    type: 'cultural',
+    typeLabel: 'Área Cultural',
+    category: 'cultural',
+    categoryLabel: 'Cultura',
+    format: 'Escenario Abierto y Artístico',
+    iconName: 'sparkles',
+    xpReward: 650,
+    location: 'Parque Vieytes.',
+    rulesSummary: 'Desfile de mascota o de disfraces por escuela la cual debe tener un significado para la institución o para los alumnos, 2 de C.B.C y 2 de C.B.O, el desfile debera tener presentador/presentadores y sera una sola pasada de gala.',
+    dates: 'Viernes 9 de Octubre (10:00 a 15:00 hs)',
     isPopular: true
   }
 ];
@@ -300,7 +345,7 @@ export const QUIZ_QUESTIONS = [
       { text: 'Armar jugadas en vóley con cabeza fría, solidaridad y estrategia táctica', houseId: 'san-alberto' },
       { text: 'Acelerar a máxima velocidad en atletismo y dominar en EA Sports FC', houseId: 'zuloaga' },
       { text: 'Subir al escenario en la Muestra de Talentos y levantar a todo el público con arte', houseId: 'evita' },
-      { text: 'Cantar el truco con picardía, responder en Preguntados y ganar por astucia', houseId: 'enet-18' }
+      { text: 'Cantar el truco con picardía, responder en Preguntados y ganar por astucia', houseId: 'eet-18' }
     ]
   },
   {
@@ -311,7 +356,7 @@ export const QUIZ_QUESTIONS = [
       { text: 'Vóley Femenino / Masculino y responder en el Preguntados escolar', houseId: 'san-alberto' },
       { text: 'Pruebas de velocidad en Atletismo y campeonatos de EA Sports FC 26', houseId: 'zuloaga' },
       { text: 'Canto, baile, bandas en vivo y expresión en la Muestra de Talentos', houseId: 'evita' },
-      { text: 'Truco Trío Mixto, postas de atletismo y competencias de destreza', houseId: 'enet-18' }
+      { text: 'Truco Trío Mixto, postas de atletismo y competencias de destreza', houseId: 'eet-18' }
     ]
   },
   {
@@ -322,7 +367,7 @@ export const QUIZ_QUESTIONS = [
       { text: '"Solidaridad, táctica y juego limpio siempre."', houseId: 'san-alberto' },
       { text: '"Velocidad que sorprende, impacto que conquista."', houseId: 'zuloaga' },
       { text: '"Fuerza colectiva, arte y pasión sin límites."', houseId: 'evita' },
-      { text: '"Mente ágil, picardía criolla y temple de acero."', houseId: 'enet-18' }
+      { text: '"Mente ágil, picardía criolla y temple de acero."', houseId: 'eet-18' }
     ]
   }
 ];

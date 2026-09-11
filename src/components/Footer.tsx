@@ -79,13 +79,39 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-400">
-          <div>
-            © 2026 Intercolegiales San Benito. Sede Parque Vieytes. Todos los derechos reservados.
+        <div className="pt-8 border-t border-slate-900 flex flex-col items-center gap-5 text-xs font-mono text-slate-400">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <a
+              href="https://www.instagram.com/municipio_sanbenito"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => sound.click()}
+              onMouseEnter={() => sound.hover()}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-pink-400/60 text-slate-300 hover:text-white transition-all hover:scale-[1.02]"
+            >
+              
+              <span>@municipio_sanbenito</span>
+            </a>
+            <a
+              href="https://www.instagram.com/deportesanbenito"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => sound.click()}
+              onMouseEnter={() => sound.hover()}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-pink-400/60 text-slate-300 hover:text-white transition-all hover:scale-[1.02]"
+            >
+              
+              <span>@deportesanbenito</span>
+            </a>
           </div>
-          <div className="flex items-center gap-2 text-slate-300">
-            <span>Organizado por</span>
-            <span className="font-cyber font-bold text-cyan-400">Municipalidad de San Benito - Deportes 2026</span>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+            <div>
+              © 2026 Intercolegiales San Benito. Sede Parque Vieytes. Todos los derechos reservados.
+            </div>
+            <div className="flex items-center gap-2 text-slate-300">
+              <span>Organizado por</span>
+              <span className="font-cyber font-bold text-cyan-400">Municipalidad de San Benito - Deportes 2026</span>
+            </div>
           </div>
         </div>
       </div>
