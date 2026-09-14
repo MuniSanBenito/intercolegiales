@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { motion, MotionConfig } from 'motion/react';
-import { Gamepad2, MapPin, Calendar, Search, Swords, Zap, Trophy, Music } from 'lucide-react';
+import { Gamepad2, MapPin, Calendar, Search, Swords, Trophy, Music } from 'lucide-react';
 import { DISCIPLINES } from '../data/tournamentData';
 import { sound } from '../lib/sound';
 
 
 interface DisciplinesSectionProps {
-  onRegisterDiscipline: (disciplineName: string) => void;
+  onRegisterDiscipline?: (disciplineName: string) => void;
 }
 
 const disciplineContainerVariants = {
@@ -19,7 +19,7 @@ const disciplineItemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' as const } },
 };
 
-export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegisterDiscipline }) => {
+export const DisciplinesSection: React.FC<DisciplinesSectionProps> = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'deportes' | 'cultural' | 'futbol' | 'voley' | 'atletismo'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -194,7 +194,7 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
                   </p>
 
                   {/* Meta Details Box */}
-                  <div className="space-y-2 text-xs font-mono text-slate-300 bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800/80 mb-5">
+                  <div className="space-y-2 text-xs font-mono text-slate-300 bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800/80">
                     <div className="flex items-start gap-2">
                       <Swords className="w-3.5 h-3.5 text-cyan-400 mt-0.5 shrink-0" />
                       <div>
@@ -218,20 +218,6 @@ export const DisciplinesSection: React.FC<DisciplinesSectionProps> = ({ onRegist
                     </div>
                   </div>
                 </div>
-
-                {/* Action CTA */}
-                <button
-                  onClick={() => { sound.click(); onRegisterDiscipline(item.name); }}
-                  onMouseEnter={() => sound.hover()}
-                  className={`w-full py-3 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${
-                    isCultural
-                      ? 'bg-purple-950/80 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 text-purple-200 hover:text-white border border-purple-500/40 hover:border-transparent'
-                      : 'bg-slate-900 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-teal-400 text-slate-200 hover:text-black border border-slate-700 hover:border-transparent'
-                  }`}
-                >
-                  <Zap className="w-3.5 h-3.5" />
-                  <span>Inscribirme en esta Disciplina</span>
-                </button>
               </motion.div>
             );
           })}

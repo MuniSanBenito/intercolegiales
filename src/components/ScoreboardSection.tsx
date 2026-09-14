@@ -1,7 +1,6 @@
 import { motion, MotionConfig } from 'motion/react';
 import { Trophy, Clock, School } from 'lucide-react';
 import { HOUSES } from '../data/tournamentData';
-import { sound } from '../lib/sound';
 
 export function ScoreboardSection() {
   return (
@@ -102,17 +101,6 @@ export function ScoreboardSection() {
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-10">
-          <a
-            href="#inscripciones"
-            onClick={() => sound.click()}
-            onMouseEnter={() => sound.hover()}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-cyber font-bold text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-lg shadow-cyan-500/20"
-          >
-            Sumá puntos para tu escuela
-          </a>
-        </div>
       </div>
       </section>
     </MotionConfig>

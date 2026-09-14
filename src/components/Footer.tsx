@@ -3,6 +3,24 @@ import { motion, MotionConfig } from 'motion/react';
 import { Gamepad2, ShieldAlert, MapPin } from 'lucide-react';
 import { sound } from '../lib/sound';
 
+const InstagramIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
 export const Footer: React.FC = () => {
   return (
     <MotionConfig reducedMotion="user">
@@ -89,7 +107,7 @@ export const Footer: React.FC = () => {
               onMouseEnter={() => sound.hover()}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-pink-400/60 text-slate-300 hover:text-white transition-all hover:scale-[1.02]"
             >
-              
+              <InstagramIcon className="w-4 h-4 text-pink-400" />
               <span>@municipio_sanbenito</span>
             </a>
             <a
@@ -100,7 +118,7 @@ export const Footer: React.FC = () => {
               onMouseEnter={() => sound.hover()}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-pink-400/60 text-slate-300 hover:text-white transition-all hover:scale-[1.02]"
             >
-              
+              <InstagramIcon className="w-4 h-4 text-pink-400" />
               <span>@deportesanbenito</span>
             </a>
           </div>

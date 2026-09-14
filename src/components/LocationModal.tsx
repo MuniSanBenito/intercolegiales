@@ -23,6 +23,7 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose })
 
   const googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=Parque+Vieytes+San+Benito+Entre+Rios'
   const chapinoMapsUrl = 'https://www.google.com/maps/search/?api=1&query=Complejo+Oscar+Chapino+Av+Jorge+Newbery+5900+San+Benito+Entre+Rios'
+  const bibliotecaMapsUrl = 'https://www.google.com/maps/search/?api=1&query=Biblioteca+Municipal+Av+Friuli+1051+San+Benito+Entre+Rios'
 
   return (
     <div
@@ -53,7 +54,7 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose })
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 uppercase">
-                2 SEDES OFICIALES DEL TORNEO
+                3 SEDES OFICIALES DEL TORNEO
               </span>
               <span className="text-[11px] font-mono text-amber-400">
                 5 AL 9 OCTUBRE 2026
@@ -138,6 +139,41 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose })
           >
             <ExternalLink className="w-4 h-4" />
             <span>Cómo llegar al Complejo Chapino</span>
+          </a>
+        </div>
+
+        {/* Venue 3: Biblioteca Municipal */}
+        <div className="mb-6 rounded-2xl border border-amber-500/20 bg-slate-900/40 p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase">
+              Sede cultural
+            </span>
+            <h3 className="text-sm sm:text-base font-cyber font-black text-white tracking-wide uppercase">
+              Biblioteca Municipal San Benito
+            </h3>
+          </div>
+          <p className="text-xs font-mono text-slate-400 mb-1">
+            Av. Friuli 1051, San Benito, Entre Ríos
+          </p>
+          <div className="w-full h-56 sm:h-64 rounded-2xl overflow-hidden border border-slate-800 relative mb-3 shadow-inner bg-slate-950">
+            <iframe
+              title="Ubicación Biblioteca Municipal San Benito"
+              src="https://maps.google.com/maps?q=Av.+Friuli+1051,+San+Benito,+Entre+Rios,+Argentina&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              className="w-full h-full border-0 filter contrast-105 opacity-90"
+              loading="lazy"
+              allowFullScreen
+            ></iframe>
+          </div>
+          <a
+            href={bibliotecaMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => sound.open()}
+            onMouseEnter={() => sound.hover()}
+            className="w-full py-3 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold text-amber-200 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-500/40 hover:border-amber-400 transition-all flex items-center justify-center gap-2"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span>Cómo llegar a la Biblioteca Municipal</span>
           </a>
         </div>
 

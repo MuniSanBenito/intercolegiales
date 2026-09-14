@@ -57,16 +57,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
             </div>
           </div>
 
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-cyber font-black text-lg sm:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-400">
-                SAN BENITO
-              </span>
-              <span className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-cyber uppercase tracking-widest bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded">
-                PARQUE VIEYTES
-              </span>
-            </div>
-            <span className="text-[11px] font-mono tracking-widest text-slate-400">
+          <div className="flex flex-col justify-center">
+            <span className="font-cyber font-bold text-[10px] sm:text-xs tracking-[0.24em] uppercase text-cyan-400 group-hover:text-cyan-300 transition-colors leading-none">
+              INTERCOLEGIALES
+            </span>
+            <span className="font-cyber font-black text-base sm:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-400 leading-tight">
+              SAN BENITO
+            </span>
+            <span className="text-[10px] font-mono tracking-widest text-slate-400 leading-none mt-0.5">
               5 AL 9 OCT // 10 A 15 HS
             </span>
           </div>
@@ -112,7 +110,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
             className="p-2.5 rounded-lg bg-slate-900/80 border border-emerald-500/40 text-emerald-300 hover:text-white hover:bg-emerald-500/20 transition-all flex items-center gap-1.5 text-xs font-mono"
           >
             <MapPin className="w-4 h-4 text-emerald-400" />
-            <span className="hidden xl:inline">Parque Vieytes</span>
           </button>
 
           {/* Sound Toggle */}

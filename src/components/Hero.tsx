@@ -73,7 +73,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-950/70 hover:bg-emerald-900/90 border border-emerald-500/40 hover:border-emerald-400 text-xs font-mono text-emerald-300 transition-all hover:scale-105 shadow-md shadow-emerald-950/50 group"
           >
             <MapPin className="w-3.5 h-3.5 text-emerald-400 group-hover:animate-bounce" />
-            <span>2 SEDES: VIEYTES • CHAPINO</span>
+            <span>3 SEDES: VIEYTES • CHAPINO • BIBLIOTECA</span>
             <ChevronRight className="w-3 h-3 text-emerald-400 opacity-70 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </motion.div>
@@ -87,7 +87,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
           <div className="flex items-center justify-center gap-3 text-xs sm:text-sm font-cyber font-bold tracking-[0.25em] uppercase text-cyan-400 mb-2">
             <span>5 ESCUELAS EN COMPETENCIA</span>
             <span>•</span>
-            <span className="text-amber-400">2 SEDES EN SAN BENITO</span>
+            <span className="text-amber-400">3 SEDES EN SAN BENITO</span>
           </div>
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-cyber tracking-tight uppercase leading-none mb-6">
             <span className="block text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.2)]">
@@ -124,7 +124,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
             className="w-full sm:w-auto px-6 py-4 rounded-xl font-cyber text-xs uppercase tracking-widest font-bold text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 hover:border-emerald-400 shadow-lg shadow-emerald-950/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group"
           >
             <MapPin className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
-            <span>Ver Ubicaciones (2 Sedes)</span>
+            <span>Ver Ubicaciones (3 Sedes)</span>
           </button>
 
 
@@ -140,7 +140,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
         </div>
 
         {/* Visible venue addresses */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl mx-auto mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl mx-auto mb-12">
           <button
             onClick={() => { sound.open(); onOpenLocation(); }}
             onMouseEnter={() => sound.hover()}
@@ -149,7 +149,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
             <MapPin className="w-5 h-5 text-emerald-400 shrink-0" />
             <span>
               <span className="block text-xs font-cyber font-black tracking-widest uppercase text-emerald-300">Parque Vieytes</span>
-              <span className="block text-xs font-mono text-slate-300">Predio central — San Benito, Entre Ríos</span>
+              <span className="block text-xs font-mono text-slate-300">Predio central — San Benito</span>
             </span>
           </button>
           <button
@@ -160,7 +160,18 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLocation }) => {
             <MapPin className="w-5 h-5 text-purple-400 shrink-0" />
             <span>
               <span className="block text-xs font-cyber font-black tracking-widest uppercase text-purple-300">Complejo Oscar Chapino</span>
-              <span className="block text-xs font-mono text-slate-300">Av. Jorge Newbery 5900, Acceso a San Benito</span>
+              <span className="block text-xs font-mono text-slate-300">Av. Jorge Newbery 5900</span>
+            </span>
+          </button>
+          <button
+            onClick={() => { sound.open(); onOpenLocation(); }}
+            onMouseEnter={() => sound.hover()}
+            className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-950/40 hover:bg-amber-900/50 px-4 py-3 text-left transition-all hover:scale-[1.01]"
+          >
+            <MapPin className="w-5 h-5 text-amber-400 shrink-0" />
+            <span>
+              <span className="block text-xs font-cyber font-black tracking-widest uppercase text-amber-300">Biblioteca Municipal</span>
+              <span className="block text-xs font-mono text-slate-300">Av. Friuli 1051, San Benito</span>
             </span>
           </button>
         </div>
