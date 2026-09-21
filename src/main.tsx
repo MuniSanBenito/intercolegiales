@@ -8,8 +8,25 @@ const router = createBrowserRouter([
   {
     hydrateFallbackElement: <PageLoader />,
     errorElement: <div>Error!</div>,
-    path: "/",
-    lazy: () => import("./pages/(public)/page.tsx"),
+    children: [
+      {
+        path: "/",
+        lazy: () => import("./pages/(public)/page.tsx"),
+      },
+      {
+        path: "/login",
+        lazy: () => import("./pages/(public)/login/page.tsx"),
+      },
+      {
+        lazy: () => import("./pages/(protected)/layout.tsx"),
+        children: [
+          {
+            path: "/panel",
+            lazy: () => import("./pages/(protected)/panel/page.tsx"),
+          },
+        ],
+      },
+    ],
   },
 ]);
 
