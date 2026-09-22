@@ -27,3 +27,5 @@ dist-ssr
 .atl/
 
 .wrangler
+
+.anotaciones.md
