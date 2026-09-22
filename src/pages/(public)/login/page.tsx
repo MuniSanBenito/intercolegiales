@@ -1,9 +1,14 @@
 import { FirebaseError } from "firebase/app";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  type User,
+} from "firebase/auth";
 import { ArrowLeft, Gamepad2, LoaderCircle, Lock } from "lucide-react";
 import { useEffect, useId, useState, type SubmitEvent } from "react";
 import { createPortal } from "react-dom";
-import { Link, useNavigate } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
+import { PageLoader } from "../../../components/PageLoader";
 import { auth } from "../../../lib/firebase";
 
 function getAuthErrorMessage(error: unknown): string {
@@ -42,6 +47,15 @@ export function Component() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (nextUser) => {
+      setUser(nextUser);
+      setReady(true);
+    });
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -70,6 +84,14 @@ export function Component() {
 
   const inputClassName =
     "h-12 w-full min-w-0 rounded-xl border border-slate-800 bg-slate-900 px-4 text-base text-slate-100 placeholder-slate-500 outline-none ring-0 transition-[border-color,box-shadow] duration-200 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 disabled:opacity-60";
+
+  if (!ready) {
+    return <PageLoader />;
+  }
+
+  if (user) {
+    return <Navigate to="/panel" replace />;
+  }
 
   return (
     <div className="relative flex min-h-dvh [align-items:safe_center] bg-[#08090e] px-4 py-6 text-slate-100 sm:py-10">

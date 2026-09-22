@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --open",
-    "dev:b": "wrangler dev --config wrangler.dev.jsonc",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "bun run build && vite preview",
@@ -25,6 +24,8 @@
     "tailwindcss": "4.3.3"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "1.57.2",
+    "@cloudflare/workers-types": "5.20260922.1",
     "@types/node": "26.6.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
@@ -32,6 +33,6 @@
     "oxlint": "1.83.0",
     "typescript": "7.0.2",
     "vite": "8.3.0",
-    "wrangler": "4.136.0"
+    "wrangler": "4.136.2"
   }
 }
