@@ -1,3 +1,4 @@
 [install]
 exact = true
-linker = "isolated"
+# isolated es como pnpm, hoisted como npm
+linker = "hoisted"
