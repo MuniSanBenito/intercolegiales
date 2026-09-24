@@ -18,11 +18,11 @@ const router = createBrowserRouter([
     },
     children: [
       {
-        path: "/",
+        index: true,
         lazy: () => import("./pages/(public)/page.tsx"),
       },
       {
-        path: "/login",
+        path: "login",
         lazy: () => import("./pages/(public)/login/page.tsx"),
       },
       {
@@ -30,12 +30,27 @@ const router = createBrowserRouter([
         lazy: () => import("./pages/(protected)/layout.tsx"),
         children: [
           {
-            path: "/panel",
+            path: "panel",
             lazy: () => import("./pages/(protected)/panel/layout.tsx"),
             children: [
               {
                 index: true,
                 lazy: () => import("./pages/(protected)/panel/page.tsx"),
+              },
+              {
+                path: "disciplinas",
+                lazy: () =>
+                  import("./pages/(protected)/panel/disciplinas/page.tsx"),
+              },
+              {
+                path: "equipos",
+                lazy: () =>
+                  import("./pages/(protected)/panel/equipos/page.tsx"),
+              },
+              {
+                path: "escuelas",
+                lazy: () =>
+                  import("./pages/(protected)/panel/escuelas/page.tsx"),
               },
             ],
           },

@@ -5,17 +5,24 @@ import {
   LoaderCircle,
   LogOut,
   Menu,
+  School,
   Users,
   X,
 } from "lucide-react";
 import { useEffect, useId, useState } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
 import { auth } from "../../../lib/firebase";
 
 const navItems = [
-  { label: "Inicio", icon: Home, current: true },
-  { label: "Disciplinas", icon: Gamepad2, current: false },
-  { label: "Equipos", icon: Users, current: false },
+  { label: "Inicio", to: "/panel", icon: Home, end: true },
+  { label: "Escuelas", to: "/panel/escuelas", icon: School, end: false },
+  {
+    label: "Disciplinas",
+    to: "/panel/disciplinas",
+    icon: Gamepad2,
+    end: false,
+  },
+  { label: "Equipos", to: "/panel/equipos", icon: Users, end: false },
 ];
 
 export function Component() {
@@ -139,22 +146,25 @@ export function Component() {
             const Icon = item.icon;
 
             return (
-              <button
-                key={item.label}
-                type="button"
-                aria-current={item.current ? "page" : undefined}
-                className={`flex min-h-11 items-center gap-3 rounded-xl border px-3 py-2.5 text-left font-cyber text-xs font-bold tracking-widest uppercase transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
-                  item.current
-                    ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-300"
-                    : "border-transparent text-slate-300 hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-300"
-                }`}
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `flex min-h-11 items-center gap-3 rounded-xl border px-3 py-2.5 text-left font-cyber text-xs font-bold tracking-widest uppercase transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+                    isActive
+                      ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-300"
+                      : "border-transparent text-slate-300 hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-300"
+                  }`
+                }
               >
                 <Icon
                   className="h-4 w-4 shrink-0 text-cyan-400"
                   aria-hidden="true"
                 />
                 {item.label}
-              </button>
+              </NavLink>
             );
           })}
         </nav>
