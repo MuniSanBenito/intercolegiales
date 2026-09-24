@@ -8,8 +8,6 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "bun run build && vite preview",
-    "deploy": "bun run build && wrangler deploy",
-    "cf-typegen": "wrangler types",
     "ncu": "bunx npm-check-updates@latest -i",
     "skills": "npx skills@latest update"
   },

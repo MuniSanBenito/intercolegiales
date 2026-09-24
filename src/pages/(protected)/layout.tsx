@@ -1,27 +1,15 @@
-import { onAuthStateChanged, type User } from "firebase/auth";
-import { useEffect, useState } from "react";
-import { Navigate, Outlet } from "react-router";
-import { PageLoader } from "../../components/PageLoader";
-import { auth } from "../../lib/firebase";
+import { Outlet, replace, type LoaderFunctionArgs } from "react-router";
+import { userContext } from "../../middlewares/auth";
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  const user = context.get(userContext);
+  if (!user) {
+    throw replace("/login");
+  }
+
+  return user;
+}
 
 export function Component() {
-  const [user, setUser] = useState<User | null>(null);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    return onAuthStateChanged(auth, (nextUser) => {
-      setUser(nextUser);
-      setReady(true);
-    });
-  }, []);
-
-  if (!ready) {
-    return <PageLoader />;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
   return <Outlet />;
 }

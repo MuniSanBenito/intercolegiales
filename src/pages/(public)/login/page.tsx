@@ -7,7 +7,7 @@ import {
 import { ArrowLeft, Gamepad2, LoaderCircle, Lock } from "lucide-react";
 import { useEffect, useId, useState, type SubmitEvent } from "react";
 import { createPortal } from "react-dom";
-import { Link, Navigate, useNavigate } from "react-router";
+import { Link, Navigate, replace, useNavigate } from "react-router";
 import { PageLoader } from "../../../components/PageLoader";
 import { auth } from "../../../lib/firebase";
 
@@ -34,6 +34,16 @@ function getAuthErrorMessage(error: unknown): string {
   }
 
   return "No se pudo iniciar sesión. Intentá de nuevo.";
+}
+
+export async function loader() {
+  await auth.authStateReady();
+
+  if (auth.currentUser) {
+    throw replace("/panel");
+  }
+
+  return null;
 }
 
 export function Component() {
