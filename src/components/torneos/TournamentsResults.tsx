@@ -84,7 +84,6 @@ export function TournamentsResults({
       caption="Torneos"
       columns={columns}
       tableClassName="w-full min-w-[760px] table-fixed text-left text-sm"
-      alignTop
       scroll
       renderCard={(tournament) => (
         <div className="flex items-start justify-between gap-3">

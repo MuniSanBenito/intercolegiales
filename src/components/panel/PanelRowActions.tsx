@@ -15,7 +15,7 @@ function ActionButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="grid h-11 w-11 place-items-center rounded-lg border border-slate-700 bg-slate-900 text-slate-300 transition-colors hover:border-cyan-400/50 hover:text-cyan-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+      className="grid h-11 w-11 place-items-center rounded-lg border border-slate-700 bg-slate-900 text-slate-300 transition-colors hover:border-cyan-400/50 hover:text-cyan-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 md:h-8 md:w-8"
     >
       {children}
     </button>
@@ -38,13 +38,13 @@ export function PanelRowActions({
   return (
     <div className={className}>
       <ActionButton label={`Ver ${name}`} onClick={onView}>
-        <Eye className="h-4 w-4" aria-hidden="true" />
+        <Eye className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
       </ActionButton>
       <ActionButton label={`Editar ${name}`} onClick={onEdit}>
-        <Pencil className="h-4 w-4" aria-hidden="true" />
+        <Pencil className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
       </ActionButton>
       <ActionButton label={`Eliminar ${name}`} onClick={onDelete}>
-        <Trash2 className="h-4 w-4" aria-hidden="true" />
+        <Trash2 className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
       </ActionButton>
     </div>
   );

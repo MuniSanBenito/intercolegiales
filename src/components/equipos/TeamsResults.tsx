@@ -90,7 +90,6 @@ export function TeamsResults({
       caption="Equipos del torneo"
       columns={columns}
       tableClassName="w-full min-w-[960px] table-fixed text-left text-sm"
-      alignTop
       scroll
       renderCard={(team) => (
         <div className="flex items-start justify-between gap-3">
