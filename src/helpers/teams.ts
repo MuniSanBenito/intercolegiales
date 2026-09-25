@@ -1,7 +1,10 @@
 import type { DocumentData } from "firebase/firestore";
 import { DISCIPLINES, HOUSES } from "../data/tournamentData";
+import type { DialogMode } from "./dialogMode";
+import { paginate, readPageParam, setPageParam, setParam } from "./listParams";
 
-export const TEAMS_PAGE_SIZE = 15;
+export type { DialogMode };
+
 export const TEAMS_COLLECTION = "equipos";
 
 export const TEAM_CYCLES = [
@@ -10,7 +13,6 @@ export const TEAM_CYCLES = [
 ] as const;
 
 export type TeamCycle = (typeof TEAM_CYCLES)[number]["value"];
-export type DialogMode = "create" | "edit" | "view";
 
 export interface Team {
   id: string;
@@ -143,24 +145,13 @@ export function applyTeamListParams(
   resetPage: boolean,
 ) {
   const next = new URLSearchParams(current);
-  const setOrDelete = (key: string, value: string | undefined) => {
-    if (value) next.set(key, value);
-    else next.delete(key);
-  };
 
-  if ("q" in patch) setOrDelete("q", patch.q);
-  if ("escuela" in patch) setOrDelete("escuela", patch.escuela);
-  if ("ciclo" in patch) setOrDelete("ciclo", patch.ciclo);
-  if ("disciplina" in patch) setOrDelete("disciplina", patch.disciplina);
-
-  if (resetPage) {
-    next.delete("pagina");
-  } else if ("pagina" in patch) {
-    if (patch.pagina && patch.pagina > 1) {
-      next.set("pagina", String(patch.pagina));
-    } else {
-      next.delete("pagina");
-    }
+  if ("q" in patch) setParam(next, "q", patch.q);
+  if ("escuela" in patch) setParam(next, "escuela", patch.escuela);
+  if ("ciclo" in patch) setParam(next, "ciclo", patch.ciclo);
+  if ("disciplina" in patch) setParam(next, "disciplina", patch.disciplina);
+  if (resetPage || "pagina" in patch) {
+    setPageParam(next, patch.pagina, resetPage);
   }
 
   return next;
@@ -180,9 +171,7 @@ export function readTeamListQuery(searchParams: URLSearchParams) {
   )
     ? disciplineParam
     : "";
-  const requestedPage = Number(searchParams.get("pagina"));
-  const page =
-    Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const page = readPageParam(searchParams);
 
   return { query, houseFilter, cycleFilter, disciplineFilter, page };
 }
@@ -220,14 +209,12 @@ export function filterTeams(
 }
 
 export function paginateTeams(teams: Team[], page: number) {
-  const pageCount = Math.max(1, Math.ceil(teams.length / TEAMS_PAGE_SIZE));
-  const currentPage = Math.min(page, pageCount);
-  const pageStart = (currentPage - 1) * TEAMS_PAGE_SIZE;
+  const result = paginate(teams, page);
 
   return {
-    pageCount,
-    currentPage,
-    visibleTeams: teams.slice(pageStart, pageStart + TEAMS_PAGE_SIZE),
+    pageCount: result.pageCount,
+    currentPage: result.currentPage,
+    visibleTeams: result.visible,
   };
 }
 

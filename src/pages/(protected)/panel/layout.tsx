@@ -6,6 +6,7 @@ import {
   LogOut,
   Menu,
   School,
+  Trophy,
   Users,
   X,
 } from "lucide-react";
@@ -23,6 +24,7 @@ const navItems = [
     end: false,
   },
   { label: "Equipos", to: "/panel/equipos", icon: Users, end: false },
+  { label: "Torneos", to: "/panel/torneos", icon: Trophy, end: false },
 ];
 
 export function Component() {

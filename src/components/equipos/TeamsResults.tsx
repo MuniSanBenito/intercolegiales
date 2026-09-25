@@ -1,12 +1,12 @@
-import { ExternalLink, Eye, LoaderCircle, Pencil, Trash2 } from "lucide-react";
-import type { ReactNode } from "react";
-import { PanelCatalog, type PanelColumn } from "../panel/PanelCatalog";
+import { ExternalLink } from "lucide-react";
 import {
   cycleLabel,
   disciplineName,
   houseName,
   type Team,
 } from "../../helpers/teams";
+import { PanelCatalog, type PanelColumn } from "../panel/PanelCatalog";
+import { PanelRowActions } from "../panel/PanelRowActions";
 
 function SheetLink({ url }: { url?: string }) {
   if (!url) {
@@ -23,67 +23,6 @@ function SheetLink({ url }: { url?: string }) {
       Abrir sheet
       <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
     </a>
-  );
-}
-
-function ActionButton({
-  label,
-  onClick,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="grid h-11 w-11 place-items-center rounded-lg border border-slate-700 bg-slate-900 text-slate-300 transition-colors hover:border-cyan-400/50 hover:text-cyan-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-    >
-      {children}
-    </button>
-  );
-}
-
-function TeamActions({
-  team,
-  onView,
-  onEdit,
-  onDelete,
-  className,
-}: {
-  team: Team;
-  onView: (team: Team) => void;
-  onEdit: (team: Team) => void;
-  onDelete: (team: Team) => void;
-  className: string;
-}) {
-  return (
-    <div className={className}>
-      <ActionButton label={`Ver ${team.name}`} onClick={() => onView(team)}>
-        <Eye className="h-4 w-4" aria-hidden="true" />
-      </ActionButton>
-      <ActionButton label={`Editar ${team.name}`} onClick={() => onEdit(team)}>
-        <Pencil className="h-4 w-4" aria-hidden="true" />
-      </ActionButton>
-      <ActionButton
-        label={`Eliminar ${team.name}`}
-        onClick={() => onDelete(team)}
-      >
-        <Trash2 className="h-4 w-4" aria-hidden="true" />
-      </ActionButton>
-    </div>
-  );
-}
-
-export function TeamsLoading() {
-  return (
-    <p className="flex items-center gap-2 text-sm text-slate-400">
-      <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
-      Cargando equipos…
-    </p>
   );
 }
 
@@ -134,11 +73,11 @@ export function TeamsResults({
       header: "Acciones",
       width: "w-[14%]",
       render: (team) => (
-        <TeamActions
-          team={team}
-          onView={onView}
-          onEdit={onEdit}
-          onDelete={onDelete}
+        <PanelRowActions
+          name={team.name}
+          onView={() => onView(team)}
+          onEdit={() => onEdit(team)}
+          onDelete={() => onDelete(team)}
           className="flex gap-1"
         />
       ),
@@ -171,11 +110,11 @@ export function TeamsResults({
               <SheetLink url={team.sheetUrl} />
             </p>
           </div>
-          <TeamActions
-            team={team}
-            onView={onView}
-            onEdit={onEdit}
-            onDelete={onDelete}
+          <PanelRowActions
+            name={team.name}
+            onView={() => onView(team)}
+            onEdit={() => onEdit(team)}
+            onDelete={() => onDelete(team)}
             className="flex shrink-0 gap-1"
           />
         </div>

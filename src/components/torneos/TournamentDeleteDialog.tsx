@@ -1,10 +1,10 @@
 import type { RefObject } from "react";
-import type { Team } from "../../helpers/teams";
+import { tournamentLabel, type Tournament } from "../../helpers/tournaments";
 import { PanelDeleteDialog } from "../panel/PanelDeleteDialog";
 
-export function TeamDeleteDialog({
+export function TournamentDeleteDialog({
   dialogRef,
-  team,
+  tournament,
   error,
   deleting,
   onCancel,
@@ -12,7 +12,7 @@ export function TeamDeleteDialog({
   onClose,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
-  team: Team | null;
+  tournament: Tournament | null;
   error: string | null;
   deleting: boolean;
   onCancel: () => void;
@@ -22,12 +22,14 @@ export function TeamDeleteDialog({
   return (
     <PanelDeleteDialog
       dialogRef={dialogRef}
-      title="Eliminar equipo"
+      title="Eliminar torneo"
       description={
         <>
-          ¿Eliminar el equipo{" "}
-          <span className="font-semibold text-white">{team?.name}</span>? Esta
-          acción no se puede deshacer.
+          ¿Eliminar el torneo{" "}
+          <span className="font-semibold text-white">
+            {tournament ? tournamentLabel(tournament) : ""}
+          </span>
+          ? Esta acción no se puede deshacer.
         </>
       }
       error={error}

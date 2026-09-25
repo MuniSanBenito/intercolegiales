@@ -1,7 +1,8 @@
 import { useId } from "react";
 import { DISCIPLINES, HOUSES } from "../../data/tournamentData";
 import { isTeamCycle, TEAM_CYCLES, type TeamCycle } from "../../helpers/teams";
-import { teamFieldClassName } from "./teamClasses";
+import { PanelField } from "../panel/PanelField";
+import { panelFieldClassName } from "../panel/panelClasses";
 
 export function TeamsFilters({
   query,
@@ -29,34 +30,26 @@ export function TeamsFilters({
 
   return (
     <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      <div className="grid gap-2 md:col-span-2 xl:col-span-1">
-        <label
-          htmlFor={searchId}
-          className="text-xs font-medium text-slate-300"
-        >
-          Buscar
-        </label>
+      <PanelField
+        id={searchId}
+        label="Buscar"
+        className="md:col-span-2 xl:col-span-1"
+      >
         <input
           id={searchId}
           type="search"
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           placeholder="Nombre o escuela"
-          className={teamFieldClassName}
+          className={panelFieldClassName}
         />
-      </div>
-      <div className="grid gap-2">
-        <label
-          htmlFor={houseFilterId}
-          className="text-xs font-medium text-slate-300"
-        >
-          Escuela
-        </label>
+      </PanelField>
+      <PanelField id={houseFilterId} label="Escuela">
         <select
           id={houseFilterId}
           value={houseFilter}
           onChange={(event) => onHouseChange(event.target.value)}
-          className={teamFieldClassName}
+          className={panelFieldClassName}
         >
           <option value="">Todas</option>
           {HOUSES.map((house) => (
@@ -65,14 +58,8 @@ export function TeamsFilters({
             </option>
           ))}
         </select>
-      </div>
-      <div className="grid gap-2">
-        <label
-          htmlFor={cycleFilterId}
-          className="text-xs font-medium text-slate-300"
-        >
-          Ciclo
-        </label>
+      </PanelField>
+      <PanelField id={cycleFilterId} label="Ciclo">
         <select
           id={cycleFilterId}
           value={cycleFilter}
@@ -80,7 +67,7 @@ export function TeamsFilters({
             const value = event.target.value;
             onCycleChange(isTeamCycle(value) ? value : "");
           }}
-          className={teamFieldClassName}
+          className={panelFieldClassName}
         >
           <option value="">Todos</option>
           {TEAM_CYCLES.map((cycle) => (
@@ -89,19 +76,13 @@ export function TeamsFilters({
             </option>
           ))}
         </select>
-      </div>
-      <div className="grid gap-2">
-        <label
-          htmlFor={disciplineFilterId}
-          className="text-xs font-medium text-slate-300"
-        >
-          Disciplina
-        </label>
+      </PanelField>
+      <PanelField id={disciplineFilterId} label="Disciplina">
         <select
           id={disciplineFilterId}
           value={disciplineFilter}
           onChange={(event) => onDisciplineChange(event.target.value)}
-          className={teamFieldClassName}
+          className={panelFieldClassName}
         >
           <option value="">Todas</option>
           {DISCIPLINES.map((discipline) => (
@@ -110,7 +91,7 @@ export function TeamsFilters({
             </option>
           ))}
         </select>
-      </div>
+      </PanelField>
     </div>
   );
 }

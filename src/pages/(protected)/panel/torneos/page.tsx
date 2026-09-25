@@ -1,54 +1,51 @@
-import { TeamDeleteDialog } from "../../../../components/equipos/TeamDeleteDialog";
-import { TeamFormDialog } from "../../../../components/equipos/TeamFormDialog";
-import { TeamsFilters } from "../../../../components/equipos/TeamsFilters";
-import { TeamsHeader } from "../../../../components/equipos/TeamsHeader";
-import { TeamsResults } from "../../../../components/equipos/TeamsResults";
 import { PanelLoading } from "../../../../components/panel/PanelLoading";
 import { PanelPage } from "../../../../components/panel/PanelPage";
 import { PanelPagination } from "../../../../components/panel/PanelPagination";
-import { useTeamsAdmin } from "../../../../helpers/useTeamsAdmin";
+import { TournamentDeleteDialog } from "../../../../components/torneos/TournamentDeleteDialog";
+import { TournamentFormDialog } from "../../../../components/torneos/TournamentFormDialog";
+import { TournamentsFilters } from "../../../../components/torneos/TournamentsFilters";
+import { TournamentsHeader } from "../../../../components/torneos/TournamentsHeader";
+import { TournamentsResults } from "../../../../components/torneos/TournamentsResults";
+import { useTournamentsAdmin } from "../../../../helpers/useTournamentsAdmin";
 
 export function Component() {
-  const admin = useTeamsAdmin();
+  const admin = useTournamentsAdmin();
 
   return (
     <PanelPage>
-      <TeamsHeader
+      <TournamentsHeader
         loading={admin.loading}
         count={admin.filteredCount}
         hasActiveQuery={admin.activeQuery}
         onCreate={() => admin.openForm("create")}
       />
 
-      <TeamsFilters
+      <TournamentsFilters
         query={admin.listQuery.query}
-        houseFilter={admin.listQuery.houseFilter}
-        cycleFilter={admin.listQuery.cycleFilter}
         disciplineFilter={admin.listQuery.disciplineFilter}
+        formatFilter={admin.listQuery.formatFilter}
         onQueryChange={(value) => admin.updateListParams({ q: value }, true)}
-        onHouseChange={(value) =>
-          admin.updateListParams({ escuela: value }, true)
-        }
-        onCycleChange={(value) =>
-          admin.updateListParams({ ciclo: value }, true)
-        }
         onDisciplineChange={(value) =>
           admin.updateListParams({ disciplina: value }, true)
+        }
+        onFormatChange={(value) =>
+          admin.updateListParams({ formato: value }, true)
         }
       />
 
       {admin.loading ? (
-        <PanelLoading label="Cargando equipos…" />
+        <PanelLoading label="Cargando torneos…" />
       ) : (
         <>
-          <TeamsResults
-            teams={admin.visibleTeams}
-            onView={(team) => admin.openForm("view", team)}
-            onEdit={(team) => admin.openForm("edit", team)}
+          <TournamentsResults
+            tournaments={admin.visibleTournaments}
+            teams={admin.teams}
+            onView={(tournament) => admin.openForm("view", tournament)}
+            onEdit={(tournament) => admin.openForm("edit", tournament)}
             onDelete={admin.openDelete}
           />
           <PanelPagination
-            label="Paginación de equipos"
+            label="Paginación de torneos"
             currentPage={admin.currentPage}
             pageCount={admin.pageCount}
             onPrevious={() =>
@@ -63,21 +60,22 @@ export function Component() {
         </>
       )}
 
-      <TeamFormDialog
+      <TournamentFormDialog
         dialogRef={admin.formDialogRef}
         title={admin.formTitle}
         readOnly={admin.readOnly}
         saving={admin.saving}
         draft={admin.draft}
         setDraft={admin.setDraft}
+        teams={admin.teams}
         formError={admin.formError}
         onSubmit={admin.handleSave}
         onClose={() => admin.formDialogRef.current?.close()}
       />
 
-      <TeamDeleteDialog
+      <TournamentDeleteDialog
         dialogRef={admin.deleteDialogRef}
-        team={admin.pendingDelete}
+        tournament={admin.pendingDelete}
         error={admin.deleteError}
         deleting={admin.deleting}
         onCancel={() => admin.deleteDialogRef.current?.close()}

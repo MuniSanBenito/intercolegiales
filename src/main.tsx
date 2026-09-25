@@ -52,6 +52,11 @@ const router = createBrowserRouter([
                 lazy: () =>
                   import("./pages/(protected)/panel/escuelas/page.tsx"),
               },
+              {
+                path: "torneos",
+                lazy: () =>
+                  import("./pages/(protected)/panel/torneos/page.tsx"),
+              },
             ],
           },
         ],

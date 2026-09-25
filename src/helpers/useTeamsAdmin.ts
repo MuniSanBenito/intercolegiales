@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { useSearchParams } from "react-router";
 import {
   applyTeamListParams,
@@ -21,11 +21,10 @@ import {
   subscribeTeams,
   updateTeam,
 } from "./teamsFirestore";
+import { usePanelDialogs } from "./usePanelDialogs";
 
 export function useTeamsAdmin() {
-  const formDialogRef = useRef<HTMLDialogElement>(null);
-  const deleteDialogRef = useRef<HTMLDialogElement>(null);
-
+  const dialogs = usePanelDialogs();
   const [searchParams, setSearchParams] = useSearchParams();
   const listQuery = readTeamListQuery(searchParams);
 
@@ -41,8 +40,6 @@ export function useTeamsAdmin() {
   const [pendingDelete, setPendingDelete] = useState<Team | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [formRequest, setFormRequest] = useState(0);
-  const [deleteRequest, setDeleteRequest] = useState(0);
 
   useEffect(() => {
     return subscribeTeams(
@@ -73,26 +70,14 @@ export function useTeamsAdmin() {
     setEditingId(team?.id ?? null);
     setDraft(team ? draftFromTeam(team) : emptyTeamDraft);
     setFormError(null);
-    setFormRequest((current) => current + 1);
+    dialogs.requestForm();
   };
 
   const openDelete = (team: Team) => {
     setPendingDelete(team);
     setDeleteError(null);
-    setDeleteRequest((current) => current + 1);
+    dialogs.requestDelete();
   };
-
-  useEffect(() => {
-    if (formRequest === 0) return;
-    const dialog = formDialogRef.current;
-    if (dialog && !dialog.open) dialog.showModal();
-  }, [formRequest]);
-
-  useEffect(() => {
-    if (deleteRequest === 0) return;
-    const dialog = deleteDialogRef.current;
-    if (dialog && !dialog.open) dialog.showModal();
-  }, [deleteRequest]);
 
   const handleSave = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -132,7 +117,7 @@ export function useTeamsAdmin() {
         await updateTeam(editingId, input);
       }
 
-      formDialogRef.current?.close();
+      dialogs.formDialogRef.current?.close();
     } catch {
       setFormError("No se pudo guardar el equipo. Intentá de nuevo.");
     } finally {
@@ -148,7 +133,7 @@ export function useTeamsAdmin() {
 
     try {
       await removeTeam(pendingDelete.id);
-      deleteDialogRef.current?.close();
+      dialogs.deleteDialogRef.current?.close();
     } catch {
       setDeleteError("No se pudo eliminar el equipo. Intentá de nuevo.");
     } finally {
@@ -172,8 +157,8 @@ export function useTeamsAdmin() {
     updateListParams,
     openForm,
     openDelete,
-    formDialogRef,
-    deleteDialogRef,
+    formDialogRef: dialogs.formDialogRef,
+    deleteDialogRef: dialogs.deleteDialogRef,
     mode,
     draft,
     setDraft,
