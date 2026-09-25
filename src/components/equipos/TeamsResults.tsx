@@ -1,5 +1,6 @@
 import { ExternalLink, Eye, LoaderCircle, Pencil, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
+import { PanelCatalog, type PanelColumn } from "../panel/PanelCatalog";
 import {
   cycleLabel,
   disciplineName,
@@ -97,120 +98,88 @@ export function TeamsResults({
   onEdit: (team: Team) => void;
   onDelete: (team: Team) => void;
 }) {
-  return (
-    <>
-      <ul
-        className={`flex flex-col gap-2 md:hidden ${
-          teams.length === 0
-            ? "min-h-16 rounded-xl border border-cyan-500/30 bg-[#0c0e1a]/90"
-            : ""
-        }`}
-      >
-        {teams.map((team) => (
-          <li
-            key={team.id}
-            className="rounded-xl border border-cyan-500/30 bg-[#0c0e1a]/90 p-3"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h2 className="truncate text-sm font-semibold text-white">
-                  {team.name}
-                </h2>
-                <p className="mt-1 text-xs text-slate-300">
-                  {houseName(team.houseId)}
-                </p>
-                <p className="mt-0.5 text-xs text-slate-400">
-                  {cycleLabel(team.cycle)}
-                  <span aria-hidden="true"> · </span>
-                  {disciplineName(team.disciplineId)}
-                </p>
-                <p className="mt-1 text-xs">
-                  <SheetLink url={team.sheetUrl} />
-                </p>
-              </div>
-              <TeamActions
-                team={team}
-                onView={onView}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                className="flex shrink-0 gap-1"
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
+  const columns: PanelColumn<Team>[] = [
+    {
+      header: "Nombre",
+      width: "w-[20%]",
+      rowHeader: true,
+      className: "break-words",
+      render: (team) => team.name,
+    },
+    {
+      header: "Escuela",
+      width: "w-[20%]",
+      className: "break-words text-slate-300",
+      render: (team) => houseName(team.houseId),
+    },
+    {
+      header: "Ciclo",
+      width: "w-[12%]",
+      className: "text-slate-300",
+      render: (team) => cycleLabel(team.cycle),
+    },
+    {
+      header: "Disciplina",
+      width: "w-[20%]",
+      className: "break-words text-slate-300",
+      render: (team) => disciplineName(team.disciplineId),
+    },
+    {
+      header: "Buena fe",
+      width: "w-[14%]",
+      className: "text-xs",
+      render: (team) => <SheetLink url={team.sheetUrl} />,
+    },
+    {
+      header: "Acciones",
+      width: "w-[14%]",
+      render: (team) => (
+        <TeamActions
+          team={team}
+          onView={onView}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          className="flex gap-1"
+        />
+      ),
+    },
+  ];
 
-      <div className="hidden overflow-x-auto rounded-2xl border border-cyan-500/30 bg-[#0c0e1a]/90 md:block">
-        <table className="w-full min-w-[960px] table-fixed text-left text-sm">
-          <caption className="sr-only">Equipos del torneo</caption>
-          <colgroup>
-            <col className="w-[20%]" />
-            <col className="w-[20%]" />
-            <col className="w-[12%]" />
-            <col className="w-[20%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-          </colgroup>
-          <thead>
-            <tr className="border-b border-cyan-500/20 font-cyber text-[10px] tracking-widest text-cyan-300 uppercase">
-              <th scope="col" className="px-3 py-3 font-bold">
-                Nombre
-              </th>
-              <th scope="col" className="px-3 py-3 font-bold">
-                Escuela
-              </th>
-              <th scope="col" className="px-3 py-3 font-bold">
-                Ciclo
-              </th>
-              <th scope="col" className="px-3 py-3 font-bold">
-                Disciplina
-              </th>
-              <th scope="col" className="px-3 py-3 font-bold">
-                Buena fe
-              </th>
-              <th scope="col" className="px-3 py-3 font-bold">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {teams.map((team) => (
-              <tr
-                key={team.id}
-                className="border-b border-slate-800 align-top last:border-0"
-              >
-                <th
-                  scope="row"
-                  className="px-3 py-3 text-left text-sm font-semibold break-words text-white"
-                >
-                  {team.name}
-                </th>
-                <td className="px-3 py-3 break-words text-slate-300">
-                  {houseName(team.houseId)}
-                </td>
-                <td className="px-3 py-3 text-slate-300">
-                  {cycleLabel(team.cycle)}
-                </td>
-                <td className="px-3 py-3 break-words text-slate-300">
-                  {disciplineName(team.disciplineId)}
-                </td>
-                <td className="px-3 py-3 text-xs">
-                  <SheetLink url={team.sheetUrl} />
-                </td>
-                <td className="px-3 py-3">
-                  <TeamActions
-                    team={team}
-                    onView={onView}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                    className="flex gap-1"
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
+  return (
+    <PanelCatalog
+      items={teams}
+      caption="Equipos del torneo"
+      columns={columns}
+      tableClassName="w-full min-w-[960px] table-fixed text-left text-sm"
+      alignTop
+      scroll
+      renderCard={(team) => (
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="truncate text-sm font-semibold text-white">
+              {team.name}
+            </h2>
+            <p className="mt-1 text-xs text-slate-300">
+              {houseName(team.houseId)}
+            </p>
+            <p className="mt-0.5 text-xs text-slate-400">
+              {cycleLabel(team.cycle)}
+              <span aria-hidden="true"> · </span>
+              {disciplineName(team.disciplineId)}
+            </p>
+            <p className="mt-1 text-xs">
+              <SheetLink url={team.sheetUrl} />
+            </p>
+          </div>
+          <TeamActions
+            team={team}
+            onView={onView}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            className="flex shrink-0 gap-1"
+          />
+        </div>
+      )}
+    />
   );
 }

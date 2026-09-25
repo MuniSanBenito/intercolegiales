@@ -7,63 +7,62 @@ import {
   TeamsLoading,
   TeamsResults,
 } from "../../../../components/equipos/TeamsResults";
+import { PanelPage } from "../../../../components/panel/PanelPage";
 import { useTeamsAdmin } from "../../../../helpers/useTeamsAdmin";
 
 export function Component() {
   const admin = useTeamsAdmin();
 
   return (
-    <main className="px-4 py-6 sm:py-8 lg:px-8">
-      <div className="mx-auto w-full max-w-6xl">
-        <TeamsHeader
-          loading={admin.loading}
-          count={admin.filteredCount}
-          hasActiveQuery={admin.activeQuery}
-          onCreate={() => admin.openForm("create")}
-        />
+    <PanelPage>
+      <TeamsHeader
+        loading={admin.loading}
+        count={admin.filteredCount}
+        hasActiveQuery={admin.activeQuery}
+        onCreate={() => admin.openForm("create")}
+      />
 
-        <TeamsFilters
-          query={admin.listQuery.query}
-          houseFilter={admin.listQuery.houseFilter}
-          cycleFilter={admin.listQuery.cycleFilter}
-          disciplineFilter={admin.listQuery.disciplineFilter}
-          onQueryChange={(value) => admin.updateListParams({ q: value }, true)}
-          onHouseChange={(value) =>
-            admin.updateListParams({ escuela: value }, true)
-          }
-          onCycleChange={(value) =>
-            admin.updateListParams({ ciclo: value }, true)
-          }
-          onDisciplineChange={(value) =>
-            admin.updateListParams({ disciplina: value }, true)
-          }
-        />
+      <TeamsFilters
+        query={admin.listQuery.query}
+        houseFilter={admin.listQuery.houseFilter}
+        cycleFilter={admin.listQuery.cycleFilter}
+        disciplineFilter={admin.listQuery.disciplineFilter}
+        onQueryChange={(value) => admin.updateListParams({ q: value }, true)}
+        onHouseChange={(value) =>
+          admin.updateListParams({ escuela: value }, true)
+        }
+        onCycleChange={(value) =>
+          admin.updateListParams({ ciclo: value }, true)
+        }
+        onDisciplineChange={(value) =>
+          admin.updateListParams({ disciplina: value }, true)
+        }
+      />
 
-        {admin.loading ? (
-          <TeamsLoading />
-        ) : (
-          <>
-            <TeamsResults
-              teams={admin.visibleTeams}
-              onView={(team) => admin.openForm("view", team)}
-              onEdit={(team) => admin.openForm("edit", team)}
-              onDelete={admin.openDelete}
-            />
-            <TeamsPagination
-              currentPage={admin.currentPage}
-              pageCount={admin.pageCount}
-              onPrevious={() =>
-                admin.updateListParams({ pagina: admin.currentPage - 1 })
-              }
-              onNext={() =>
-                admin.updateListParams({
-                  pagina: Math.min(admin.pageCount, admin.currentPage + 1),
-                })
-              }
-            />
-          </>
-        )}
-      </div>
+      {admin.loading ? (
+        <TeamsLoading />
+      ) : (
+        <>
+          <TeamsResults
+            teams={admin.visibleTeams}
+            onView={(team) => admin.openForm("view", team)}
+            onEdit={(team) => admin.openForm("edit", team)}
+            onDelete={admin.openDelete}
+          />
+          <TeamsPagination
+            currentPage={admin.currentPage}
+            pageCount={admin.pageCount}
+            onPrevious={() =>
+              admin.updateListParams({ pagina: admin.currentPage - 1 })
+            }
+            onNext={() =>
+              admin.updateListParams({
+                pagina: Math.min(admin.pageCount, admin.currentPage + 1),
+              })
+            }
+          />
+        </>
+      )}
 
       <TeamFormDialog
         dialogRef={admin.formDialogRef}
@@ -86,6 +85,6 @@ export function Component() {
         onConfirm={admin.handleDelete}
         onClose={admin.clearDeleteDialog}
       />
-    </main>
+    </PanelPage>
   );
 }
