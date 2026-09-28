@@ -54,8 +54,18 @@ const router = createBrowserRouter([
               },
               {
                 path: "torneos",
-                lazy: () =>
-                  import("./pages/(protected)/panel/torneos/page.tsx"),
+                children: [
+                  {
+                    index: true,
+                    lazy: () =>
+                      import("./pages/(protected)/panel/torneos/page.tsx"),
+                  },
+                  {
+                    path: ":tournamentId",
+                    lazy: () =>
+                      import("./pages/(protected)/panel/torneos/[tournamentId]/page.tsx"),
+                  },
+                ],
               },
             ],
           },

@@ -1,19 +1,22 @@
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
+  getDocs,
   onSnapshot,
   serverTimestamp,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { MATCHES_SUBCOLLECTION } from "./fixtures";
 import { disciplineName } from "./teams";
 import {
   parseTournament,
   TOURNAMENTS_COLLECTION,
   type Tournament,
   type TournamentFormat,
+  type TournamentGroup,
 } from "./tournaments";
 
 export function subscribeTournaments(
@@ -54,21 +57,50 @@ export async function createTournament(input: {
   });
 }
 
+function groupsPayload(groups: TournamentGroup[]) {
+  return groups.map((group) => ({
+    id: group.id,
+    name: group.name,
+    teamIds: group.teamIds,
+  }));
+}
+
 export async function updateTournament(
   id: string,
   input: {
     disciplineId: string;
     format: TournamentFormat;
     teamIds: string[];
+    groups: TournamentGroup[];
   },
 ) {
   await updateDoc(doc(db, TOURNAMENTS_COLLECTION, id), {
     disciplineId: input.disciplineId,
     format: input.format,
     teamIds: input.teamIds,
+    groups: groupsPayload(input.groups),
+  });
+}
+
+export async function saveTournamentGroups(
+  id: string,
+  groups: TournamentGroup[],
+) {
+  await updateDoc(doc(db, TOURNAMENTS_COLLECTION, id), {
+    groups: groupsPayload(groups),
   });
 }
 
 export async function removeTournament(id: string) {
-  await deleteDoc(doc(db, TOURNAMENTS_COLLECTION, id));
+  const tournamentRef = doc(db, TOURNAMENTS_COLLECTION, id);
+  const matches = await getDocs(
+    collection(tournamentRef, MATCHES_SUBCOLLECTION),
+  );
+  const batch = writeBatch(db);
+
+  matches.forEach((matchDoc) => {
+    batch.delete(matchDoc.ref);
+  });
+  batch.delete(tournamentRef);
+  await batch.commit();
 }

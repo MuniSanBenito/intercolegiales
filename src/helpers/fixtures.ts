@@ -1,0 +1,542 @@
+import { DISCIPLINES } from "../data/tournamentData";
+import {
+  emptyTournamentGroups,
+  isGroupId,
+  pruneTournamentGroups,
+  type GroupId,
+  type Tournament,
+  type TournamentGroup,
+} from "./tournaments";
+
+export const MATCHES_SUBCOLLECTION = "partidos";
+
+export const COMPLEXES = [
+  { id: "chapino", label: "Complejo Oscar Chapino" },
+  { id: "vieytes", label: "Parque Vieytes" },
+  { id: "biblioteca", label: "Biblioteca municipal" },
+] as const;
+
+export type ComplexId = (typeof COMPLEXES)[number]["id"];
+
+export type MatchStage = "grupos" | "final" | "tercer-puesto";
+
+export type MatchSide =
+  | { kind: "team"; teamId: string }
+  | { kind: "group-place"; groupId: GroupId; place: 1 | 2 };
+
+export interface Match {
+  id: string;
+  stage: MatchStage;
+  groupId?: GroupId;
+  round?: number;
+  order: number;
+  home: MatchSide;
+  away: MatchSide;
+  complexId?: ComplexId;
+  court?: string;
+  startsAt?: string;
+  homeScore?: number;
+  awayScore?: number;
+}
+
+export interface MatchDraft {
+  stage: MatchStage;
+  groupId?: GroupId;
+  round?: number;
+  order: number;
+  home: MatchSide;
+  away: MatchSide;
+  complexId?: ComplexId;
+  court?: string;
+}
+
+export interface MatchVenue {
+  complexId: ComplexId;
+  court?: string;
+}
+
+export interface StandingRow {
+  teamId: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  points: number;
+}
+
+export interface RankedStanding {
+  rank: number;
+  row: StandingRow;
+}
+
+export type PlaceResolution =
+  | { status: "pending" }
+  | { status: "team"; teamId: string }
+  | { status: "tie"; teamIds: string[] };
+
+export function isComplexId(value: unknown): value is ComplexId {
+  return COMPLEXES.some((complex) => complex.id === value);
+}
+
+export function complexLabel(complexId: ComplexId): string {
+  return (
+    COMPLEXES.find((complex) => complex.id === complexId)?.label ?? complexId
+  );
+}
+
+export function venueFromLocation(location: string): MatchVenue {
+  const cleaned = location.trim().replace(/\.$/, "");
+  const separator = cleaned.indexOf(" - ");
+  const place = separator === -1 ? cleaned : cleaned.slice(0, separator);
+  const detail =
+    separator === -1 ? "" : cleaned.slice(separator + 3).trim();
+  const haystack = place.toLowerCase();
+
+  let complexId: ComplexId = "vieytes";
+  if (haystack.includes("chapino")) complexId = "chapino";
+  else if (haystack.includes("bibl")) complexId = "biblioteca";
+
+  return {
+    complexId,
+    court: detail || undefined,
+  };
+}
+
+export function venueForDiscipline(disciplineId: string): MatchVenue {
+  const location =
+    DISCIPLINES.find((discipline) => discipline.id === disciplineId)
+      ?.location ?? "";
+
+  return venueFromLocation(location);
+}
+
+export function isPlayed(match: Match): boolean {
+  return (
+    typeof match.homeScore === "number" && typeof match.awayScore === "number"
+  );
+}
+
+export function roundRobinPairings(teamIds: string[]) {
+  if (teamIds.length < 2) return [];
+
+  const slots = [...teamIds];
+  if (slots.length % 2 === 1) slots.push("");
+
+  const count = slots.length;
+  const rounds = count - 1;
+  const half = count / 2;
+  const pairings: Array<{
+    round: number;
+    homeTeamId: string;
+    awayTeamId: string;
+  }> = [];
+
+  for (let round = 0; round < rounds; round += 1) {
+    for (let index = 0; index < half; index += 1) {
+      const left = slots[index] ?? "";
+      const right = slots[count - 1 - index] ?? "";
+      if (!left || !right) continue;
+
+      const swap = round % 2 === 1;
+      pairings.push({
+        round: round + 1,
+        homeTeamId: swap ? right : left,
+        awayTeamId: swap ? left : right,
+      });
+    }
+
+    const fixed = slots[0] ?? "";
+    const rotating = slots.slice(1);
+    const last = rotating.pop();
+    if (last !== undefined) rotating.unshift(last);
+    slots.splice(0, slots.length, fixed, ...rotating);
+  }
+
+  return pairings;
+}
+
+function withVenue(draft: MatchDraft, venue: MatchVenue): MatchDraft {
+  return {
+    ...draft,
+    complexId: venue.complexId,
+    court: venue.court,
+  };
+}
+
+export function buildGroupMatchDrafts(
+  groups: TournamentGroup[],
+  venue: MatchVenue,
+): MatchDraft[] {
+  return groups.flatMap((group) => {
+    const pairings = roundRobinPairings(group.teamIds);
+
+    return pairings.map((pairing, index) =>
+      withVenue(
+        {
+          stage: "grupos",
+          groupId: group.id,
+          round: pairing.round,
+          order: index,
+          home: { kind: "team", teamId: pairing.homeTeamId },
+          away: { kind: "team", teamId: pairing.awayTeamId },
+        },
+        venue,
+      ),
+    );
+  });
+}
+
+export function buildKnockoutMatchDrafts(venue: MatchVenue): MatchDraft[] {
+  return [
+    withVenue(
+      {
+        stage: "final",
+        order: 0,
+        home: { kind: "group-place", groupId: "A", place: 1 },
+        away: { kind: "group-place", groupId: "B", place: 1 },
+      },
+      venue,
+    ),
+    withVenue(
+      {
+        stage: "tercer-puesto",
+        order: 1,
+        home: { kind: "group-place", groupId: "A", place: 2 },
+        away: { kind: "group-place", groupId: "B", place: 2 },
+      },
+      venue,
+    ),
+  ];
+}
+
+export function unassignedTeamIds(
+  teamIds: string[],
+  groups: TournamentGroup[],
+) {
+  const assigned = new Set(groups.flatMap((group) => group.teamIds));
+  return teamIds.filter((teamId) => !assigned.has(teamId));
+}
+
+export function moveTeamToGroup(
+  groups: TournamentGroup[],
+  teamId: string,
+  target: "none" | GroupId,
+): TournamentGroup[] {
+  const cleared = groups.map((group) => ({
+    ...group,
+    teamIds: group.teamIds.filter((id) => id !== teamId),
+  }));
+
+  if (target === "none") return cleared;
+
+  return cleared.map((group) =>
+    group.id === target
+      ? { ...group, teamIds: [...group.teamIds, teamId] }
+      : group,
+  );
+}
+
+export function sameGroupAssignment(
+  left: TournamentGroup[],
+  right: TournamentGroup[],
+) {
+  const signature = (groups: TournamentGroup[]) =>
+    emptyTournamentGroups()
+      .map((fallback) => {
+        const group = groups.find((item) => item.id === fallback.id);
+        return `${fallback.id}:${(group?.teamIds ?? []).join(",")}`;
+      })
+      .join("|");
+
+  return signature(left) === signature(right);
+}
+
+export function validateFixtureGroups(tournament: Tournament): string | null {
+  if (tournament.format !== "dos-grupos-final") {
+    return "Este formato todavía no arma fixture.";
+  }
+
+  const groups = pruneTournamentGroups(tournament.groups, tournament.teamIds);
+  const assigned = groups.flatMap((group) => group.teamIds);
+
+  if (assigned.length !== tournament.teamIds.length) {
+    return "Asigná todos los equipos a un grupo.";
+  }
+
+  for (const group of groups) {
+    if (group.teamIds.length < 2) {
+      return `${group.name} necesita al menos 2 equipos.`;
+    }
+  }
+
+  return null;
+}
+
+export function groupMatches(matches: Match[], groupId: GroupId) {
+  return matches
+    .filter((match) => match.stage === "grupos" && match.groupId === groupId)
+    .sort((left, right) => {
+      const roundDifference = (left.round ?? 0) - (right.round ?? 0);
+      if (roundDifference !== 0) return roundDifference;
+      return left.order - right.order;
+    });
+}
+
+export function knockoutMatch(matches: Match[], stage: "final" | "tercer-puesto") {
+  return matches.find((match) => match.stage === stage);
+}
+
+function emptyStanding(teamId: string): StandingRow {
+  return {
+    teamId,
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    points: 0,
+  };
+}
+
+function applyResult(row: StandingRow, scored: number, conceded: number) {
+  row.played += 1;
+  row.goalsFor += scored;
+  row.goalsAgainst += conceded;
+  row.goalDifference = row.goalsFor - row.goalsAgainst;
+
+  if (scored > conceded) {
+    row.won += 1;
+    row.points += 3;
+  } else if (scored === conceded) {
+    row.drawn += 1;
+    row.points += 1;
+  } else {
+    row.lost += 1;
+  }
+}
+
+function standingsRows(teamIds: string[], matches: Match[]): StandingRow[] {
+  const rows = new Map(teamIds.map((teamId) => [teamId, emptyStanding(teamId)]));
+
+  for (const match of matches) {
+    if (!isPlayed(match)) continue;
+    if (match.home.kind !== "team" || match.away.kind !== "team") continue;
+
+    const home = rows.get(match.home.teamId);
+    const away = rows.get(match.away.teamId);
+    if (!home || !away) continue;
+    if (match.homeScore === undefined || match.awayScore === undefined) continue;
+
+    applyResult(home, match.homeScore, match.awayScore);
+    applyResult(away, match.awayScore, match.homeScore);
+  }
+
+  return [...rows.values()];
+}
+
+function compareStanding(left: StandingRow, right: StandingRow) {
+  if (right.points !== left.points) return right.points - left.points;
+  if (right.goalDifference !== left.goalDifference) {
+    return right.goalDifference - left.goalDifference;
+  }
+  if (right.goalsFor !== left.goalsFor) return right.goalsFor - left.goalsFor;
+  return 0;
+}
+
+function clusterByRecord(rows: StandingRow[]): StandingRow[][] {
+  const sorted = [...rows].sort(compareStanding);
+  const clusters: StandingRow[][] = [];
+
+  for (const row of sorted) {
+    const current = clusters[clusters.length - 1];
+    if (current && compareStanding(current[0], row) === 0) {
+      current.push(row);
+    } else {
+      clusters.push([row]);
+    }
+  }
+
+  return clusters;
+}
+
+function sortCluster(rows: StandingRow[]) {
+  return [...rows].sort((left, right) =>
+    left.teamId.localeCompare(right.teamId),
+  );
+}
+
+function orderClusters(teamIds: string[], matches: Match[]): StandingRow[][] {
+  const clusters = clusterByRecord(standingsRows(teamIds, matches));
+  const ordered: StandingRow[][] = [];
+
+  for (const cluster of clusters) {
+    if (cluster.length < 2) {
+      ordered.push(cluster);
+      continue;
+    }
+
+    const ids = new Set(cluster.map((row) => row.teamId));
+    const innerMatches = matches.filter((match) => {
+      if (!isPlayed(match)) return false;
+      if (match.home.kind !== "team" || match.away.kind !== "team") return false;
+      return ids.has(match.home.teamId) && ids.has(match.away.teamId);
+    });
+    const innerClusters = clusterByRecord(standingsRows([...ids], innerMatches));
+
+    if (innerClusters.length < 2) {
+      ordered.push(sortCluster(cluster));
+      continue;
+    }
+
+    for (const inner of innerClusters) {
+      const innerIds = new Set(inner.map((row) => row.teamId));
+      ordered.push(
+        sortCluster(cluster.filter((row) => innerIds.has(row.teamId))),
+      );
+    }
+  }
+
+  return ordered;
+}
+
+export function rankedStandings(
+  teamIds: string[],
+  matches: Match[],
+): RankedStanding[] {
+  const ranked: RankedStanding[] = [];
+  let rank = 1;
+
+  for (const cluster of orderClusters(teamIds, matches)) {
+    for (const row of cluster) ranked.push({ rank, row });
+    rank += cluster.length;
+  }
+
+  return ranked;
+}
+
+export function resolveGroupPlace(
+  teamIds: string[],
+  matches: Match[],
+  place: 1 | 2,
+): PlaceResolution {
+  if (teamIds.length === 0) return { status: "pending" };
+
+  const played = matches.some(
+    (match) =>
+      isPlayed(match) &&
+      match.home.kind === "team" &&
+      match.away.kind === "team" &&
+      teamIds.includes(match.home.teamId) &&
+      teamIds.includes(match.away.teamId),
+  );
+
+  if (!played) return { status: "pending" };
+
+  let rank = 1;
+
+  for (const cluster of orderClusters(teamIds, matches)) {
+    const nextRank = rank + cluster.length;
+    if (place >= rank && place < nextRank) {
+      if (cluster.length === 1) {
+        return { status: "team", teamId: cluster[0].teamId };
+      }
+
+      return { status: "tie", teamIds: cluster.map((row) => row.teamId) };
+    }
+    rank = nextRank;
+  }
+
+  return { status: "pending" };
+}
+
+export function stageLabel(stage: MatchStage) {
+  if (stage === "final") return "Final";
+  if (stage === "tercer-puesto") return "3.º y 4.º puesto";
+  return "Fase de grupos";
+}
+
+export function placeLabel(groupName: string, place: 1 | 2) {
+  return place === 1 ? `1.º de ${groupName}` : `2.º de ${groupName}`;
+}
+
+export function parseScoreInput(value: string): number | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (!/^\d+$/.test(trimmed)) {
+    throw new Error("El marcador tiene que ser un número entero de 0 o más.");
+  }
+  return Number(trimmed);
+}
+
+export function isStartsAt(value: string) {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value);
+}
+
+function parseSide(value: unknown): MatchSide | null {
+  if (!value || typeof value !== "object") return null;
+
+  const side = value as {
+    kind?: unknown;
+    teamId?: unknown;
+    groupId?: unknown;
+    place?: unknown;
+  };
+
+  if (side.kind === "team" && typeof side.teamId === "string") {
+    return { kind: "team", teamId: side.teamId };
+  }
+
+  if (
+    side.kind === "group-place" &&
+    isGroupId(side.groupId) &&
+    (side.place === 1 || side.place === 2)
+  ) {
+    return { kind: "group-place", groupId: side.groupId, place: side.place };
+  }
+
+  return null;
+}
+
+export function parseMatch(id: string, data: Record<string, unknown>): Match | null {
+  const home = parseSide(data.home);
+  const away = parseSide(data.away);
+  const stage = data.stage;
+
+  if (
+    !home ||
+    !away ||
+    (stage !== "grupos" && stage !== "final" && stage !== "tercer-puesto") ||
+    typeof data.order !== "number"
+  ) {
+    return null;
+  }
+
+  const match: Match = { id, stage, order: data.order, home, away };
+
+  if (stage === "grupos") {
+    if (!isGroupId(data.groupId) || typeof data.round !== "number") return null;
+    match.groupId = data.groupId;
+    match.round = data.round;
+  }
+
+  if (isComplexId(data.complexId)) match.complexId = data.complexId;
+  if (typeof data.court === "string" && data.court.trim()) {
+    match.court = data.court.trim();
+  }
+  if (typeof data.startsAt === "string" && isStartsAt(data.startsAt)) {
+    match.startsAt = data.startsAt;
+  }
+  if (typeof data.homeScore === "number" && data.homeScore >= 0) {
+    match.homeScore = data.homeScore;
+  }
+  if (typeof data.awayScore === "number" && data.awayScore >= 0) {
+    match.awayScore = data.awayScore;
+  }
+
+  return match;
+}

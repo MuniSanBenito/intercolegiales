@@ -11,6 +11,7 @@ import {
   filterTournaments,
   hasActiveTournamentQuery,
   paginateTournaments,
+  pruneTournamentGroups,
   readTournamentListQuery,
   tournamentFormTitle,
   validateTournamentDraft,
@@ -129,7 +130,13 @@ export function useTournamentsAdmin() {
       if (mode === "create") {
         await createTournament(input);
       } else if (editingId) {
-        await updateTournament(editingId, input);
+        const current = tournaments.find(
+          (tournament) => tournament.id === editingId,
+        );
+        await updateTournament(editingId, {
+          ...input,
+          groups: pruneTournamentGroups(current?.groups ?? [], input.teamIds),
+        });
       }
 
       dialogs.formDialogRef.current?.close();

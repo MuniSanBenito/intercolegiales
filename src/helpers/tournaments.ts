@@ -21,11 +21,22 @@ export const TOURNAMENT_FORMATS = [
 
 export type TournamentFormat = (typeof TOURNAMENT_FORMATS)[number]["value"];
 
+export const GROUP_IDS = ["A", "B"] as const;
+
+export type GroupId = (typeof GROUP_IDS)[number];
+
+export interface TournamentGroup {
+  id: GroupId;
+  name: string;
+  teamIds: string[];
+}
+
 export interface Tournament {
   id: string;
   disciplineId: string;
   format: TournamentFormat;
   teamIds: string[];
+  groups: TournamentGroup[];
 }
 
 export interface TournamentDraft {
@@ -49,6 +60,70 @@ export interface TournamentListPatch {
 
 export function isTournamentFormat(value: unknown): value is TournamentFormat {
   return TOURNAMENT_FORMATS.some((format) => format.value === value);
+}
+
+export function isGroupId(value: unknown): value is GroupId {
+  return value === "A" || value === "B";
+}
+
+export function emptyTournamentGroups(): TournamentGroup[] {
+  return [
+    { id: "A", name: "Grupo A", teamIds: [] },
+    { id: "B", name: "Grupo B", teamIds: [] },
+  ];
+}
+
+export function pruneTournamentGroups(
+  groups: TournamentGroup[],
+  teamIds: string[],
+): TournamentGroup[] {
+  const allowed = new Set(teamIds);
+  const seen = new Set<string>();
+
+  return emptyTournamentGroups().map((fallback) => {
+    const current = groups.find((group) => group.id === fallback.id);
+    const nextTeamIds = (current?.teamIds ?? []).filter((teamId) => {
+      if (!allowed.has(teamId) || seen.has(teamId)) return false;
+      seen.add(teamId);
+      return true;
+    });
+
+    return {
+      id: fallback.id,
+      name: current?.name?.trim() || fallback.name,
+      teamIds: nextTeamIds,
+    };
+  });
+}
+
+function parseGroups(value: unknown, teamIds: string[]): TournamentGroup[] {
+  if (!Array.isArray(value)) return emptyTournamentGroups();
+
+  const parsed = value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+
+    const group = item as {
+      id?: unknown;
+      name?: unknown;
+      teamIds?: unknown;
+    };
+
+    if (!isGroupId(group.id)) return [];
+
+    const groupTeamIds = Array.isArray(group.teamIds)
+      ? group.teamIds.filter((teamId) => typeof teamId === "string")
+      : [];
+
+    return [
+      {
+        id: group.id,
+        name: typeof group.name === "string" ? group.name : "",
+        teamIds: groupTeamIds,
+      },
+    ];
+  });
+
+  return pruneTournamentGroups(parsed, teamIds);
 }
 
 export function formatLabel(format: TournamentFormat): string {
@@ -79,6 +154,7 @@ export function parseTournament(
     disciplineId: data.disciplineId,
     format: data.format,
     teamIds: data.teamIds,
+    groups: parseGroups(data.groups, data.teamIds),
   };
 }
 

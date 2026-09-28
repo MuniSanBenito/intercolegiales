@@ -44,14 +44,14 @@ export function TournamentsResults({
   const columns: PanelColumn<Tournament>[] = [
     {
       header: "Disciplina",
-      width: "w-[24%]",
+      width: "w-[22%]",
       rowHeader: true,
       className: "break-words",
       render: (tournament) => disciplineName(tournament.disciplineId),
     },
     {
       header: "Formato",
-      width: "w-[28%]",
+      width: "w-[26%]",
       className: "break-words text-slate-300",
       render: (tournament) => formatLabel(tournament.format),
     },
@@ -65,10 +65,11 @@ export function TournamentsResults({
     },
     {
       header: "Acciones",
-      width: "w-[14%]",
+      width: "w-[18%]",
       render: (tournament) => (
         <PanelRowActions
           name={tournamentLabel(tournament)}
+          fixtureTo={`/panel/torneos/${tournament.id}`}
           onView={() => onView(tournament)}
           onEdit={() => onEdit(tournament)}
           onDelete={() => onDelete(tournament)}
@@ -83,7 +84,7 @@ export function TournamentsResults({
       items={tournaments}
       caption="Torneos"
       columns={columns}
-      tableClassName="w-full min-w-[760px] table-fixed text-left text-sm"
+      tableClassName="w-full min-w-[860px] table-fixed text-left text-sm"
       scroll
       renderCard={(tournament) => (
         <div className="flex items-start justify-between gap-3">
@@ -100,6 +101,7 @@ export function TournamentsResults({
           </div>
           <PanelRowActions
             name={tournamentLabel(tournament)}
+            fixtureTo={`/panel/torneos/${tournament.id}`}
             onView={() => onView(tournament)}
             onEdit={() => onEdit(tournament)}
             onDelete={() => onDelete(tournament)}
