@@ -89,7 +89,7 @@ export function FixtureGroups({
 
   return (
     <div>
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div className="grid gap-3">
         <TeamPool
           title="Sin grupo"
           teams={visible(unassignedTeamIds(teamIds, groups))}
@@ -101,7 +101,9 @@ export function FixtureGroups({
         />
         <TeamPool
           title="Grupo A"
-          teams={visible(groups.find((group) => group.id === "A")?.teamIds ?? [])}
+          teams={visible(
+            groups.find((group) => group.id === "A")?.teamIds ?? [],
+          )}
           actions={[
             { label: "Grupo B", target: "B" },
             { label: "Quitar", target: "none" },
@@ -110,7 +112,9 @@ export function FixtureGroups({
         />
         <TeamPool
           title="Grupo B"
-          teams={visible(groups.find((group) => group.id === "B")?.teamIds ?? [])}
+          teams={visible(
+            groups.find((group) => group.id === "B")?.teamIds ?? [],
+          )}
           actions={[
             { label: "Grupo A", target: "A" },
             { label: "Quitar", target: "none" },

@@ -18,7 +18,10 @@ import {
   type Tournament,
   type TournamentGroup,
 } from "./tournaments";
-import { saveTournamentGroups, subscribeTournaments } from "./tournamentsFirestore";
+import {
+  saveTournamentGroups,
+  subscribeTournaments,
+} from "./tournamentsFirestore";
 
 function groupsSignature(groups: TournamentGroup[]) {
   return emptyTournamentGroups()
@@ -36,7 +39,9 @@ export function useFixtureAdmin(tournamentId: string) {
   const [matches, setMatches] = useState<Match[]>([]);
   const [tournamentsReady, setTournamentsReady] = useState(false);
   const [teamsReady, setTeamsReady] = useState(false);
-  const [matchesReady, setMatchesReady] = useState(() => tournamentId.length === 0);
+  const [matchesReady, setMatchesReady] = useState(
+    () => tournamentId.length === 0,
+  );
   const [trackedMatchId, setTrackedMatchId] = useState(tournamentId);
   const [groupsDraft, setGroupsDraft] = useState<TournamentGroup[] | null>(
     null,
@@ -123,7 +128,7 @@ export function useFixtureAdmin(tournamentId: string) {
   };
 
   const saveGroups = async () => {
-    if (!tournament || savingGroups) return;
+    if (!tournament || savingGroups) return false;
 
     setSavingGroups(true);
     setGroupsError(null);
@@ -133,15 +138,17 @@ export function useFixtureAdmin(tournamentId: string) {
         tournament.id,
         pruneTournamentGroups(groups, tournament.teamIds),
       );
+      return true;
     } catch {
       setGroupsError("No se pudieron guardar los grupos. Intentá de nuevo.");
+      return false;
     } finally {
       setSavingGroups(false);
     }
   };
 
   const runGenerate = async () => {
-    if (!tournament || generating) return;
+    if (!tournament || generating) return false;
 
     setGenerating(true);
     setGenerateError(null);
@@ -156,33 +163,35 @@ export function useFixtureAdmin(tournamentId: string) {
       if (regenerateDialogRef.current?.open) {
         regenerateDialogRef.current.close();
       }
+      return true;
     } catch {
       setGenerateError("No se pudo armar el fixture. Intentá de nuevo.");
+      return false;
     } finally {
       setGenerating(false);
     }
   };
 
-  const requestGenerate = () => {
-    if (!tournament || generating) return;
+  const requestGenerate = async () => {
+    if (!tournament || generating) return false;
 
     if (groupsDirty) {
       setGenerateError("Guardá los grupos antes de generar el fixture.");
-      return;
+      return false;
     }
 
     const validationError = validateFixtureGroups(tournament);
     if (validationError) {
       setGenerateError(validationError);
-      return;
+      return false;
     }
 
     if (hasGroupMatches) {
       regenerateDialogRef.current?.showModal();
-      return;
+      return false;
     }
 
-    void runGenerate();
+    return runGenerate();
   };
 
   return {
@@ -202,7 +211,7 @@ export function useFixtureAdmin(tournamentId: string) {
     moveTeam,
     saveGroups,
     requestGenerate,
-    confirmGenerate: () => void runGenerate(),
+    confirmGenerate: runGenerate,
     groupMatches: (groupId: GroupId) => groupMatches(matches, groupId),
   };
 }
