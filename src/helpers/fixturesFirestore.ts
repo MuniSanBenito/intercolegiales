@@ -10,6 +10,7 @@ import { db } from "../lib/firebase";
 import {
   buildGroupMatchDrafts,
   buildKnockoutMatchDrafts,
+  buildLeagueMatchDrafts,
   isStartsAt,
   MATCHES_SUBCOLLECTION,
   parseMatch,
@@ -19,10 +20,7 @@ import {
   type MatchDraft,
   type MatchVenue,
 } from "./fixtures";
-import {
-  TOURNAMENTS_COLLECTION,
-  type TournamentGroup,
-} from "./tournaments";
+import { TOURNAMENTS_COLLECTION, type TournamentGroup } from "./tournaments";
 
 function matchesCollection(tournamentId: string) {
   return collection(
@@ -90,6 +88,26 @@ export async function generateFixture(
   for (const match of knockout) {
     const alreadyExists = existing.some((item) => item.stage === match.stage);
     if (alreadyExists) continue;
+    batch.set(doc(parent), matchPayload(match));
+  }
+
+  await batch.commit();
+}
+
+export async function generateLeagueFixture(
+  tournamentId: string,
+  teamIds: string[],
+  existing: Match[],
+  venue: MatchVenue,
+) {
+  const batch = writeBatch(db);
+  const parent = matchesCollection(tournamentId);
+
+  for (const match of existing) {
+    batch.delete(doc(parent, match.id));
+  }
+
+  for (const match of buildLeagueMatchDrafts(teamIds, venue)) {
     batch.set(doc(parent), matchPayload(match));
   }
 

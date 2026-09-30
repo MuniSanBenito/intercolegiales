@@ -1,10 +1,6 @@
 import { HOUSES } from "../../data/tournamentData";
 import type { DisciplinePodium, SchoolScore } from "../../helpers/results";
-import {
-  disciplineName,
-  houseName,
-  type Team,
-} from "../../helpers/teams";
+import { disciplineName, houseName, type Team } from "../../helpers/teams";
 import { formatLabel } from "../../helpers/tournaments";
 
 function placeWord(place: 1 | 2 | 3) {
@@ -44,7 +40,7 @@ export function ResultsBoard({
         </h2>
         <p className="mt-1 max-w-2xl text-sm text-slate-400">
           {waiting
-            ? "Todavía no hay podios definidos. Los puntos entran cuando se carga la final y el partido por el 3.º puesto."
+            ? "Todavía no hay podios definidos. En cada disciplina los puntos entran cuando quedan definidos el 1.º, el 2.º y el 3.º."
             : "Las escuelas quedan ordenadas por la suma de todos los podios."}
         </p>
         <ol className="mt-4 flex flex-col gap-3">
@@ -114,47 +110,50 @@ export function ResultsBoard({
         ) : (
           <div className="mt-4 grid gap-3 lg:grid-cols-2">
             {disciplines.map((discipline) => (
-                <article
-                  key={discipline.tournamentId}
-                  className="rounded-2xl border border-cyan-500/30 bg-[#0c0e1a]/90 p-4"
-                >
-                  <h3 className="font-cyber text-base font-black tracking-tight text-white uppercase">
-                    {disciplineName(discipline.disciplineId)}
-                  </h3>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {formatLabel(discipline.format)}
+              <article
+                key={discipline.tournamentId}
+                className="rounded-2xl border border-cyan-500/30 bg-[#0c0e1a]/90 p-4"
+              >
+                <h3 className="font-cyber text-base font-black tracking-tight text-white uppercase">
+                  {disciplineName(discipline.disciplineId)}
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  {formatLabel(discipline.format)}
+                </p>
+                <ol className="mt-3 flex flex-col gap-2">
+                  {discipline.slots.map((slot) => (
+                    <li
+                      key={slot.place}
+                      className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2"
+                    >
+                      <p className="text-[11px] font-semibold tracking-wide text-cyan-300 uppercase">
+                        {placeWord(slot.place)}
+                        <span
+                          className="mx-1.5 text-slate-600"
+                          aria-hidden="true"
+                        >
+                          ·
+                        </span>
+                        {slot.points.toLocaleString("es-AR")} pts
+                      </p>
+                      <p className="mt-0.5 text-sm break-words text-slate-100">
+                        {slot.teamId
+                          ? `${teamName(slot.teamId)}${
+                              slot.houseId
+                                ? ` · ${houseName(slot.houseId)}`
+                                : ""
+                            }`
+                          : "Pendiente"}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+                {discipline.detail ? (
+                  <p className="mt-3 text-sm text-amber-200/90">
+                    {discipline.detail}
                   </p>
-                  <ol className="mt-3 flex flex-col gap-2">
-                    {discipline.slots.map((slot) => (
-                      <li
-                        key={slot.place}
-                        className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2"
-                      >
-                        <p className="text-[11px] font-semibold tracking-wide text-cyan-300 uppercase">
-                          {placeWord(slot.place)}
-                          <span className="mx-1.5 text-slate-600" aria-hidden="true">
-                            ·
-                          </span>
-                          {slot.points.toLocaleString("es-AR")} pts
-                        </p>
-                        <p className="mt-0.5 text-sm break-words text-slate-100">
-                          {slot.teamId
-                            ? `${teamName(slot.teamId)}${
-                                slot.houseId
-                                  ? ` · ${houseName(slot.houseId)}`
-                                  : ""
-                              }`
-                            : "Pendiente"}
-                        </p>
-                      </li>
-                    ))}
-                  </ol>
-                  {discipline.detail ? (
-                    <p className="mt-3 text-sm text-amber-200/90">
-                      {discipline.detail}
-                    </p>
-                  ) : null}
-                </article>
+                ) : null}
+              </article>
             ))}
           </div>
         )}

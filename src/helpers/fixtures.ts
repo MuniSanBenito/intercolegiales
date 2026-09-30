@@ -18,7 +18,7 @@ export const COMPLEXES = [
 
 export type ComplexId = (typeof COMPLEXES)[number]["id"];
 
-export type MatchStage = "grupos" | "final" | "tercer-puesto";
+export type MatchStage = "grupos" | "liga" | "final" | "tercer-puesto";
 
 export type MatchSide =
   | { kind: "team"; teamId: string }
@@ -91,8 +91,7 @@ export function venueFromLocation(location: string): MatchVenue {
   const cleaned = location.trim().replace(/\.$/, "");
   const separator = cleaned.indexOf(" - ");
   const place = separator === -1 ? cleaned : cleaned.slice(0, separator);
-  const detail =
-    separator === -1 ? "" : cleaned.slice(separator + 3).trim();
+  const detail = separator === -1 ? "" : cleaned.slice(separator + 3).trim();
   const haystack = place.toLowerCase();
 
   let complexId: ComplexId = "vieytes";
@@ -189,6 +188,24 @@ export function buildGroupMatchDrafts(
   });
 }
 
+export function buildLeagueMatchDrafts(
+  teamIds: string[],
+  venue: MatchVenue,
+): MatchDraft[] {
+  return roundRobinPairings(teamIds).map((pairing, index) =>
+    withVenue(
+      {
+        stage: "liga",
+        round: pairing.round,
+        order: index,
+        home: { kind: "team", teamId: pairing.homeTeamId },
+        away: { kind: "team", teamId: pairing.awayTeamId },
+      },
+      venue,
+    ),
+  );
+}
+
 export function buildKnockoutMatchDrafts(venue: MatchVenue): MatchDraft[] {
   return [
     withVenue(
@@ -254,6 +271,18 @@ export function sameGroupAssignment(
   return signature(left) === signature(right);
 }
 
+export function validateLeagueFixture(tournament: Tournament): string | null {
+  if (tournament.format !== "todos-contra-todos-con-fixture") {
+    return "Este formato todavía no arma fixture.";
+  }
+
+  if (tournament.teamIds.length < 2) {
+    return "Inscribí al menos 2 equipos.";
+  }
+
+  return null;
+}
+
 export function validateFixtureGroups(tournament: Tournament): string | null {
   if (tournament.format !== "dos-grupos-final") {
     return "Este formato todavía no arma fixture.";
@@ -285,7 +314,20 @@ export function groupMatches(matches: Match[], groupId: GroupId) {
     });
 }
 
-export function knockoutMatch(matches: Match[], stage: "final" | "tercer-puesto") {
+export function leagueMatches(matches: Match[]) {
+  return matches
+    .filter((match) => match.stage === "liga")
+    .sort((left, right) => {
+      const roundDifference = (left.round ?? 0) - (right.round ?? 0);
+      if (roundDifference !== 0) return roundDifference;
+      return left.order - right.order;
+    });
+}
+
+export function knockoutMatch(
+  matches: Match[],
+  stage: "final" | "tercer-puesto",
+) {
   return matches.find((match) => match.stage === stage);
 }
 
@@ -321,7 +363,9 @@ function applyResult(row: StandingRow, scored: number, conceded: number) {
 }
 
 function standingsRows(teamIds: string[], matches: Match[]): StandingRow[] {
-  const rows = new Map(teamIds.map((teamId) => [teamId, emptyStanding(teamId)]));
+  const rows = new Map(
+    teamIds.map((teamId) => [teamId, emptyStanding(teamId)]),
+  );
 
   for (const match of matches) {
     if (!isPlayed(match)) continue;
@@ -330,7 +374,8 @@ function standingsRows(teamIds: string[], matches: Match[]): StandingRow[] {
     const home = rows.get(match.home.teamId);
     const away = rows.get(match.away.teamId);
     if (!home || !away) continue;
-    if (match.homeScore === undefined || match.awayScore === undefined) continue;
+    if (match.homeScore === undefined || match.awayScore === undefined)
+      continue;
 
     applyResult(home, match.homeScore, match.awayScore);
     applyResult(away, match.awayScore, match.homeScore);
@@ -383,10 +428,13 @@ function orderClusters(teamIds: string[], matches: Match[]): StandingRow[][] {
     const ids = new Set(cluster.map((row) => row.teamId));
     const innerMatches = matches.filter((match) => {
       if (!isPlayed(match)) return false;
-      if (match.home.kind !== "team" || match.away.kind !== "team") return false;
+      if (match.home.kind !== "team" || match.away.kind !== "team")
+        return false;
       return ids.has(match.home.teamId) && ids.has(match.away.teamId);
     });
-    const innerClusters = clusterByRecord(standingsRows([...ids], innerMatches));
+    const innerClusters = clusterByRecord(
+      standingsRows([...ids], innerMatches),
+    );
 
     if (innerClusters.length < 2) {
       ordered.push(sortCluster(cluster));
@@ -422,7 +470,7 @@ export function rankedStandings(
 export function resolveGroupPlace(
   teamIds: string[],
   matches: Match[],
-  place: 1 | 2,
+  place: 1 | 2 | 3,
 ): PlaceResolution {
   if (teamIds.length === 0) return { status: "pending" };
 
@@ -457,6 +505,7 @@ export function resolveGroupPlace(
 export function stageLabel(stage: MatchStage) {
   if (stage === "final") return "Final";
   if (stage === "tercer-puesto") return "3.º y 4.º puesto";
+  if (stage === "liga") return "Todos contra todos";
   return "Fase de grupos";
 }
 
@@ -502,7 +551,10 @@ function parseSide(value: unknown): MatchSide | null {
   return null;
 }
 
-export function parseMatch(id: string, data: Record<string, unknown>): Match | null {
+export function parseMatch(
+  id: string,
+  data: Record<string, unknown>,
+): Match | null {
   const home = parseSide(data.home);
   const away = parseSide(data.away);
   const stage = data.stage;
@@ -510,7 +562,10 @@ export function parseMatch(id: string, data: Record<string, unknown>): Match | n
   if (
     !home ||
     !away ||
-    (stage !== "grupos" && stage !== "final" && stage !== "tercer-puesto") ||
+    (stage !== "grupos" &&
+      stage !== "liga" &&
+      stage !== "final" &&
+      stage !== "tercer-puesto") ||
     typeof data.order !== "number"
   ) {
     return null;
@@ -521,6 +576,11 @@ export function parseMatch(id: string, data: Record<string, unknown>): Match | n
   if (stage === "grupos") {
     if (!isGroupId(data.groupId) || typeof data.round !== "number") return null;
     match.groupId = data.groupId;
+    match.round = data.round;
+  }
+
+  if (stage === "liga") {
+    if (typeof data.round !== "number") return null;
     match.round = data.round;
   }
 

@@ -3,6 +3,7 @@ import {
   groupMatches,
   isPlayed,
   knockoutMatch,
+  leagueMatches,
   resolveGroupPlace,
   type Match,
   type MatchSide,
@@ -125,12 +126,80 @@ function awardedSlot(
   };
 }
 
+function placeWord(place: PodiumPlace) {
+  if (place === 1) return "1.º";
+  if (place === 2) return "2.º";
+  return "3.º";
+}
+
+function podiumFromLeague(
+  tournament: Tournament,
+  matches: Match[],
+  teams: Team[],
+): DisciplinePodium {
+  const slots = [emptySlot(1), emptySlot(2), emptySlot(3)];
+  const table = leagueMatches(matches);
+
+  if (table.length === 0) {
+    return {
+      tournamentId: tournament.id,
+      disciplineId: tournament.disciplineId,
+      format: tournament.format,
+      slots,
+      detail: "Generá el fixture para armar la tabla.",
+    };
+  }
+
+  if (!table.every(isPlayed)) {
+    return {
+      tournamentId: tournament.id,
+      disciplineId: tournament.disciplineId,
+      format: tournament.format,
+      slots,
+      detail:
+        "El podio se define cuando están cargados todos los partidos de la tabla.",
+    };
+  }
+
+  const details: string[] = [];
+
+  for (const place of [1, 2, 3] as const) {
+    const resolution = resolveGroupPlace(tournament.teamIds, table, place);
+
+    if (resolution.status === "team") {
+      slots[place - 1] = awardedSlot(place, resolution.teamId, teams);
+    } else if (resolution.status === "tie") {
+      details.push(
+        `Hay un empate en el ${placeWord(place)} puesto, así que no se define.`,
+      );
+    }
+  }
+
+  if (slots.some((slot) => slot.teamId && !slot.houseId)) {
+    details.push(
+      "Hay un puesto de un equipo sin escuela: ese puntaje no entra en la tabla general.",
+    );
+  }
+
+  return {
+    tournamentId: tournament.id,
+    disciplineId: tournament.disciplineId,
+    format: tournament.format,
+    slots,
+    detail: details.length > 0 ? details.join(" ") : null,
+  };
+}
+
 function podiumForTournament(
   tournament: Tournament,
   matches: Match[],
   teams: Team[],
 ): DisciplinePodium {
   const slots = [emptySlot(1), emptySlot(2), emptySlot(3)];
+
+  if (tournament.format === "todos-contra-todos-con-fixture") {
+    return podiumFromLeague(tournament, matches, teams);
+  }
 
   if (tournament.format !== "dos-grupos-final") {
     return {
@@ -236,7 +305,10 @@ export function buildResults(
     };
   }).sort((left, right) => {
     if (right.points !== left.points) return right.points - left.points;
-    return houseName(left.houseId).localeCompare(houseName(right.houseId), "es");
+    return houseName(left.houseId).localeCompare(
+      houseName(right.houseId),
+      "es",
+    );
   });
 
   let lastPoints = -1;

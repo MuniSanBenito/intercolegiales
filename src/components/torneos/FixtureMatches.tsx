@@ -5,6 +5,7 @@ import {
   groupMatches,
   isComplexId,
   isPlayed,
+  leagueMatches,
   placeLabel,
   resolveGroupPlace,
   stageLabel,
@@ -313,7 +314,7 @@ function MatchRow({
   );
 }
 
-export type FixtureSection = "A" | "B" | "final";
+export type FixtureSection = "A" | "B" | "final" | "liga";
 
 export function FixtureMatches({
   tournamentId,
@@ -359,19 +360,31 @@ export function FixtureMatches({
             matches: matches.filter((match) => match.stage === "tercer-puesto"),
           },
         ]
-      : [
-          {
-            id: section,
-            title:
-              groups.find((group) => group.id === section)?.name ??
-              `Grupo ${section}`,
-            matches: groupMatches(matches, section),
-          },
-        ];
+      : section === "liga"
+        ? [
+            {
+              id: "liga",
+              title: "Todos contra todos",
+              matches: leagueMatches(matches),
+            },
+          ]
+        : [
+            {
+              id: section,
+              title:
+                groups.find((group) => group.id === section)?.name ??
+                `Grupo ${section}`,
+              matches: groupMatches(matches, section),
+            },
+          ];
 
   const openTitle = openMatch
-    ? openMatch.stage === "grupos"
-      ? `${blocks[0]?.title ?? "Partido"} · Jornada ${openMatch.round ?? 1}`
+    ? openMatch.stage === "grupos" || openMatch.stage === "liga"
+      ? `${
+          openMatch.stage === "liga"
+            ? "Todos contra todos"
+            : (blocks[0]?.title ?? "Partido")
+        } · Jornada ${openMatch.round ?? 1}`
       : openMatch.stage === "final"
         ? "Final"
         : "3.º y 4.º puesto"

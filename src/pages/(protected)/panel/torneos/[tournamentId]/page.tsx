@@ -15,6 +15,8 @@ import {
 } from "../../../../../components/torneos/FixtureMatches";
 import { FixtureRegenerateDialog } from "../../../../../components/torneos/FixtureRegenerateDialog";
 import { FixtureStandings } from "../../../../../components/torneos/FixtureStandings";
+import { LeagueFixture } from "../../../../../components/torneos/LeagueFixture";
+import { groupMatches } from "../../../../../helpers/fixtures";
 import { disciplineName } from "../../../../../helpers/teams";
 import { formatLabel } from "../../../../../helpers/tournaments";
 import { useFixtureAdmin } from "../../../../../helpers/useFixtureAdmin";
@@ -30,7 +32,9 @@ export function Component() {
 
   if (!admin.loading && !groupsReady) {
     setGroupsReady(true);
-    setGroupsOpen(!admin.hasGroupMatches);
+    if (admin.tournament?.format === "dos-grupos-final") {
+      setGroupsOpen(!admin.hasGroupMatches);
+    }
   }
 
   useEffect(() => {
@@ -74,6 +78,27 @@ export function Component() {
       Volver a torneos
     </Link>
   );
+
+  if (tournament.format === "todos-contra-todos-con-fixture") {
+    return (
+      <LeagueFixture
+        tournament={tournament}
+        teams={admin.teams}
+        matches={admin.matches}
+        generating={admin.generating}
+        generateError={admin.generateError}
+        hasMatches={admin.hasLeagueMatches}
+        hasResults={admin.leagueResults}
+        regenerateDialogRef={admin.regenerateDialogRef}
+        onGenerate={() => {
+          void admin.requestLeagueGenerate();
+        }}
+        onConfirmGenerate={() => {
+          void admin.confirmLeagueGenerate();
+        }}
+      />
+    );
+  }
 
   if (tournament.format !== "dos-grupos-final") {
     return (
@@ -236,8 +261,9 @@ export function Component() {
           >
             {selectedGroup ? (
               <FixtureStandings
-                groups={[selectedGroup]}
-                matches={admin.matches}
+                title={`Tabla de ${selectedGroup.name}`}
+                teamIds={selectedGroup.teamIds}
+                matches={groupMatches(admin.matches, selectedGroup.id)}
                 teams={admin.teams}
               />
             ) : null}

@@ -40,38 +40,39 @@ export function TeamsResults({
   const columns: PanelColumn<Team>[] = [
     {
       header: "Nombre",
-      width: "w-[20%]",
+      width: "w-[16%]",
       rowHeader: true,
       className: "break-words",
       render: (team) => team.name,
     },
     {
       header: "Escuela",
-      width: "w-[20%]",
+      width: "w-[18%]",
       className: "break-words text-slate-300",
       render: (team) => houseName(team.houseId),
     },
     {
       header: "Ciclo",
-      width: "w-[12%]",
+      width: "w-[10%]",
       className: "text-slate-300",
       render: (team) => cycleLabel(team.cycle),
     },
     {
       header: "Disciplina",
-      width: "w-[20%]",
+      width: "w-[16%]",
       className: "break-words text-slate-300",
       render: (team) => disciplineName(team.disciplineId),
     },
     {
       header: "Buena fe",
-      width: "w-[14%]",
+      width: "w-[16%]",
       className: "text-xs",
       render: (team) => <SheetLink url={team.sheetUrl} />,
     },
     {
       header: "Acciones",
-      width: "w-[14%]",
+      width: "w-[24%]",
+      className: "whitespace-nowrap",
       render: (team) => (
         <PanelRowActions
           name={team.name}
@@ -89,8 +90,7 @@ export function TeamsResults({
       items={teams}
       caption="Equipos del torneo"
       columns={columns}
-      tableClassName="w-full min-w-[960px] table-fixed text-left text-sm"
-      scroll
+      tableClassName="w-full table-fixed text-left text-sm"
       renderCard={(team) => (
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">

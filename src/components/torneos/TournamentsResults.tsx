@@ -44,20 +44,20 @@ export function TournamentsResults({
   const columns: PanelColumn<Tournament>[] = [
     {
       header: "Disciplina",
-      width: "w-[22%]",
+      width: "w-[20%]",
       rowHeader: true,
       className: "break-words",
       render: (tournament) => disciplineName(tournament.disciplineId),
     },
     {
       header: "Formato",
-      width: "w-[26%]",
+      width: "w-[22%]",
       className: "break-words text-slate-300",
       render: (tournament) => formatLabel(tournament.format),
     },
     {
       header: "Equipos",
-      width: "w-[34%]",
+      width: "w-[32%]",
       className: "break-words text-slate-300",
       render: (tournament) => (
         <TeamSummary tournament={tournament} teams={teams} />
@@ -65,7 +65,8 @@ export function TournamentsResults({
     },
     {
       header: "Acciones",
-      width: "w-[18%]",
+      width: "w-[26%]",
+      className: "whitespace-nowrap",
       render: (tournament) => (
         <PanelRowActions
           name={tournamentLabel(tournament)}
@@ -84,8 +85,7 @@ export function TournamentsResults({
       items={tournaments}
       caption="Torneos"
       columns={columns}
-      tableClassName="w-full min-w-[860px] table-fixed text-left text-sm"
-      scroll
+      tableClassName="w-full table-fixed text-left text-sm"
       renderCard={(tournament) => (
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">

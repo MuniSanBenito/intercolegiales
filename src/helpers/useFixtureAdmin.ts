@@ -5,10 +5,15 @@ import {
   moveTeamToGroup,
   sameGroupAssignment,
   validateFixtureGroups,
+  validateLeagueFixture,
   venueForDiscipline,
   type Match,
 } from "./fixtures";
-import { generateFixture, subscribeMatches } from "./fixturesFirestore";
+import {
+  generateFixture,
+  generateLeagueFixture,
+  subscribeMatches,
+} from "./fixturesFirestore";
 import type { Team } from "./teams";
 import { subscribeTeams } from "./teamsFirestore";
 import {
@@ -118,6 +123,10 @@ export function useFixtureAdmin(tournamentId: string) {
   const groupResults = matches.some(
     (match) => match.stage === "grupos" && isPlayed(match),
   );
+  const hasLeagueMatches = matches.some((match) => match.stage === "liga");
+  const leagueResults = matches.some(
+    (match) => match.stage === "liga" && isPlayed(match),
+  );
 
   const moveTeam = (teamId: string, target: "none" | GroupId) => {
     setGroupsError(null);
@@ -194,6 +203,48 @@ export function useFixtureAdmin(tournamentId: string) {
     return runGenerate();
   };
 
+  const runLeagueGenerate = async () => {
+    if (!tournament || generating) return false;
+
+    setGenerating(true);
+    setGenerateError(null);
+
+    try {
+      await generateLeagueFixture(
+        tournament.id,
+        tournament.teamIds,
+        matches,
+        venueForDiscipline(tournament.disciplineId),
+      );
+      if (regenerateDialogRef.current?.open) {
+        regenerateDialogRef.current.close();
+      }
+      return true;
+    } catch {
+      setGenerateError("No se pudo armar el fixture. Intentá de nuevo.");
+      return false;
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const requestLeagueGenerate = async () => {
+    if (!tournament || generating) return false;
+
+    const validationError = validateLeagueFixture(tournament);
+    if (validationError) {
+      setGenerateError(validationError);
+      return false;
+    }
+
+    if (hasLeagueMatches) {
+      regenerateDialogRef.current?.showModal();
+      return false;
+    }
+
+    return runLeagueGenerate();
+  };
+
   return {
     loading: !tournamentsReady || !teamsReady || !matchesReady,
     tournament,
@@ -207,11 +258,15 @@ export function useFixtureAdmin(tournamentId: string) {
     generateError,
     hasGroupMatches,
     groupResults,
+    hasLeagueMatches,
+    leagueResults,
     regenerateDialogRef,
     moveTeam,
     saveGroups,
     requestGenerate,
     confirmGenerate: runGenerate,
+    requestLeagueGenerate,
+    confirmLeagueGenerate: runLeagueGenerate,
     groupMatches: (groupId: GroupId) => groupMatches(matches, groupId),
   };
 }
