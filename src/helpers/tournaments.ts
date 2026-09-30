@@ -21,6 +21,32 @@ export const TOURNAMENT_FORMATS = [
 
 export type TournamentFormat = (typeof TOURNAMENT_FORMATS)[number]["value"];
 
+export const RANKING_FORMAT = "todos-contra-todos-sin-fixture" as const;
+
+export function isRankingFormat(
+  format: TournamentFormat,
+): format is typeof RANKING_FORMAT {
+  return format === RANKING_FORMAT;
+}
+
+export interface RankingEvent {
+  venue: string;
+  eventDate: string;
+  details: string;
+}
+
+export interface RankingPodium {
+  firstId: string | null;
+  secondId: string | null;
+  thirdId: string | null;
+}
+
+export const emptyRankingPodium: RankingPodium = {
+  firstId: null,
+  secondId: null,
+  thirdId: null,
+};
+
 export const GROUP_IDS = ["A", "B"] as const;
 
 export type GroupId = (typeof GROUP_IDS)[number];
@@ -37,18 +63,26 @@ export interface Tournament {
   format: TournamentFormat;
   teamIds: string[];
   groups: TournamentGroup[];
+  event: RankingEvent | null;
+  podium: RankingPodium;
 }
 
 export interface TournamentDraft {
   disciplineId: string;
   format: "" | TournamentFormat;
   teamIds: string[];
+  venue: string;
+  eventDate: string;
+  details: string;
 }
 
 export const emptyTournamentDraft: TournamentDraft = {
   disciplineId: "",
   format: "",
   teamIds: [],
+  venue: "",
+  eventDate: "",
+  details: "",
 };
 
 export interface TournamentListPatch {
@@ -149,13 +183,97 @@ export function parseTournament(
     return null;
   }
 
+  const teamIds = data.teamIds as string[];
+
   return {
     id,
     disciplineId: data.disciplineId,
     format: data.format,
-    teamIds: data.teamIds,
-    groups: parseGroups(data.groups, data.teamIds),
+    teamIds,
+    groups: parseGroups(data.groups, teamIds),
+    event: parseRankingEvent(data.format, data),
+    podium: isRankingFormat(data.format)
+      ? parseRankingPodium(data.podium, teamIds)
+      : emptyRankingPodium,
   };
+}
+
+function parseRankingEvent(
+  format: TournamentFormat,
+  data: DocumentData,
+): RankingEvent | null {
+  if (!isRankingFormat(format)) return null;
+
+  return {
+    venue: typeof data.venue === "string" ? data.venue : "",
+    eventDate: typeof data.eventDate === "string" ? data.eventDate : "",
+    details: typeof data.details === "string" ? data.details : "",
+  };
+}
+
+function podiumTeamId(value: unknown, allowed: Set<string>, used: Set<string>) {
+  if (typeof value !== "string" || !allowed.has(value) || used.has(value)) {
+    return null;
+  }
+
+  used.add(value);
+  return value;
+}
+
+export function parseRankingPodium(
+  value: unknown,
+  teamIds: string[],
+): RankingPodium {
+  const allowed = new Set(teamIds);
+  const used = new Set<string>();
+  const podium =
+    value && typeof value === "object"
+      ? (value as {
+          firstId?: unknown;
+          secondId?: unknown;
+          thirdId?: unknown;
+        })
+      : {};
+
+  return {
+    firstId: podiumTeamId(podium.firstId, allowed, used),
+    secondId: podiumTeamId(podium.secondId, allowed, used),
+    thirdId: podiumTeamId(podium.thirdId, allowed, used),
+  };
+}
+
+export function pruneRankingPodium(
+  podium: RankingPodium,
+  teamIds: string[],
+): RankingPodium {
+  return parseRankingPodium(podium, teamIds);
+}
+
+export function isEventDate(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+}
+
+export function formatEventDate(value: string) {
+  if (!isEventDate(value)) return value;
+
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("es-AR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 export function tournamentFormTitle(mode: DialogMode): string {
@@ -169,6 +287,9 @@ export function draftFromTournament(tournament: Tournament): TournamentDraft {
     disciplineId: tournament.disciplineId,
     format: tournament.format,
     teamIds: tournament.teamIds,
+    venue: tournament.event?.venue ?? "",
+    eventDate: tournament.event?.eventDate ?? "",
+    details: tournament.event?.details ?? "",
   };
 }
 
@@ -196,7 +317,21 @@ export function validateTournamentDraft(
     return "Completá disciplina y formato.";
   }
 
-  if (eligibleTeamIds(draft, teams).length === 0) {
+  const teamCount = eligibleTeamIds(draft, teams).length;
+
+  if (draft.format && isRankingFormat(draft.format)) {
+    if (!draft.venue.trim() || !isEventDate(draft.eventDate)) {
+      return "Completá el lugar y la fecha.";
+    }
+
+    if (teamCount < 3) {
+      return "Elegí al menos tres equipos para armar el podio.";
+    }
+
+    return null;
+  }
+
+  if (teamCount === 0) {
     return "Elegí al menos un equipo de la disciplina.";
   }
 

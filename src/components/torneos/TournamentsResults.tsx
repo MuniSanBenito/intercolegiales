@@ -1,6 +1,7 @@
 import { disciplineName, type Team } from "../../helpers/teams";
 import {
   formatLabel,
+  isRankingFormat,
   teamNames,
   tournamentLabel,
   type Tournament,
@@ -71,6 +72,11 @@ export function TournamentsResults({
         <PanelRowActions
           name={tournamentLabel(tournament)}
           fixtureTo={`/panel/torneos/${tournament.id}`}
+          fixtureLabel={
+            isRankingFormat(tournament.format)
+              ? `Resultado de ${tournamentLabel(tournament)}`
+              : undefined
+          }
           onView={() => onView(tournament)}
           onEdit={() => onEdit(tournament)}
           onDelete={() => onDelete(tournament)}
@@ -102,6 +108,11 @@ export function TournamentsResults({
           <PanelRowActions
             name={tournamentLabel(tournament)}
             fixtureTo={`/panel/torneos/${tournament.id}`}
+            fixtureLabel={
+              isRankingFormat(tournament.format)
+                ? `Resultado de ${tournamentLabel(tournament)}`
+                : undefined
+            }
             onView={() => onView(tournament)}
             onEdit={() => onEdit(tournament)}
             onDelete={() => onDelete(tournament)}

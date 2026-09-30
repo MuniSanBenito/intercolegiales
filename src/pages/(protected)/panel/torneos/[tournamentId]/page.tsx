@@ -16,6 +16,7 @@ import {
 import { FixtureRegenerateDialog } from "../../../../../components/torneos/FixtureRegenerateDialog";
 import { FixtureStandings } from "../../../../../components/torneos/FixtureStandings";
 import { LeagueFixture } from "../../../../../components/torneos/LeagueFixture";
+import { RankingResult } from "../../../../../components/torneos/RankingResult";
 import { groupMatches } from "../../../../../helpers/fixtures";
 import { disciplineName } from "../../../../../helpers/teams";
 import { formatLabel } from "../../../../../helpers/tournaments";
@@ -98,6 +99,10 @@ export function Component() {
         }}
       />
     );
+  }
+
+  if (tournament.format === "todos-contra-todos-sin-fixture") {
+    return <RankingResult tournament={tournament} teams={admin.teams} />;
   }
 
   if (tournament.format !== "dos-grupos-final") {

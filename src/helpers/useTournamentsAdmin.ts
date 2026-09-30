@@ -7,10 +7,13 @@ import {
   applyTournamentListParams,
   draftFromTournament,
   eligibleTeamIds,
+  emptyRankingPodium,
   emptyTournamentDraft,
   filterTournaments,
   hasActiveTournamentQuery,
+  isRankingFormat,
   paginateTournaments,
+  pruneRankingPodium,
   pruneTournamentGroups,
   readTournamentListQuery,
   tournamentFormTitle,
@@ -117,10 +120,21 @@ export function useTournamentsAdmin() {
 
     if (!draft.format) return;
 
+    const teamIds = eligibleTeamIds(draft, teams);
+    const current = editingId
+      ? tournaments.find((tournament) => tournament.id === editingId)
+      : undefined;
     const input = {
       disciplineId: draft.disciplineId,
       format: draft.format,
-      teamIds: eligibleTeamIds(draft, teams),
+      teamIds,
+      venue: draft.venue.trim(),
+      eventDate: draft.eventDate,
+      details: draft.details.trim(),
+      podium:
+        isRankingFormat(draft.format) && current
+          ? pruneRankingPodium(current.podium, teamIds)
+          : emptyRankingPodium,
     };
 
     setSaving(true);
@@ -130,9 +144,6 @@ export function useTournamentsAdmin() {
       if (mode === "create") {
         await createTournament(input);
       } else if (editingId) {
-        const current = tournaments.find(
-          (tournament) => tournament.id === editingId,
-        );
         await updateTournament(editingId, {
           ...input,
           groups: pruneTournamentGroups(current?.groups ?? [], input.teamIds),

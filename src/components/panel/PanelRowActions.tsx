@@ -1,4 +1,4 @@
-import { CalendarDays, Eye, Pencil, Trash2 } from "lucide-react";
+import { CalendarDays, Eye, Medal, Pencil, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 
@@ -33,6 +33,7 @@ export function PanelRowActions({
   onDelete,
   className,
   fixtureTo,
+  fixtureLabel,
 }: {
   name: string;
   onView: () => void;
@@ -40,19 +41,24 @@ export function PanelRowActions({
   onDelete: () => void;
   className: string;
   fixtureTo?: string;
+  fixtureLabel?: string;
 }) {
   return (
     <div className={className}>
       {fixtureTo ? (
         <Link
           to={fixtureTo}
-          aria-label={`Fixture de ${name}`}
+          aria-label={fixtureLabel ?? `Fixture de ${name}`}
           className={actionClassName}
         >
-          <CalendarDays
-            className="h-4 w-4 md:h-3.5 md:w-3.5"
-            aria-hidden="true"
-          />
+          {fixtureLabel ? (
+            <Medal className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
+          ) : (
+            <CalendarDays
+              className="h-4 w-4 md:h-3.5 md:w-3.5"
+              aria-hidden="true"
+            />
+          )}
         </Link>
       ) : null}
       <ActionButton label={`Ver ${name}`} onClick={onView}>

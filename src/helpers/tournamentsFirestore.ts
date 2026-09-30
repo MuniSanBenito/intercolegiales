@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteField,
   doc,
   getDocs,
   onSnapshot,
@@ -12,8 +13,10 @@ import { db } from "../lib/firebase";
 import { MATCHES_SUBCOLLECTION } from "./fixtures";
 import { disciplineName } from "./teams";
 import {
+  isRankingFormat,
   parseTournament,
   TOURNAMENTS_COLLECTION,
+  type RankingPodium,
   type Tournament,
   type TournamentFormat,
   type TournamentGroup,
@@ -44,16 +47,62 @@ export function subscribeTournaments(
   );
 }
 
+function podiumPayload(podium: RankingPodium) {
+  return {
+    firstId: podium.firstId,
+    secondId: podium.secondId,
+    thirdId: podium.thirdId,
+  };
+}
+
+function rankingFields(input: {
+  format: TournamentFormat;
+  venue: string;
+  eventDate: string;
+  details: string;
+  podium: RankingPodium;
+}) {
+  if (!isRankingFormat(input.format)) {
+    return {
+      venue: deleteField(),
+      eventDate: deleteField(),
+      details: deleteField(),
+      podium: deleteField(),
+    };
+  }
+
+  return {
+    venue: input.venue,
+    eventDate: input.eventDate,
+    details: input.details,
+    podium: podiumPayload(input.podium),
+  };
+}
+
 export async function createTournament(input: {
   disciplineId: string;
   format: TournamentFormat;
   teamIds: string[];
+  venue: string;
+  eventDate: string;
+  details: string;
+  podium: RankingPodium;
 }) {
+  const ranking = isRankingFormat(input.format)
+    ? {
+        venue: input.venue,
+        eventDate: input.eventDate,
+        details: input.details,
+        podium: podiumPayload(input.podium),
+      }
+    : {};
+
   await addDoc(collection(db, TOURNAMENTS_COLLECTION), {
     disciplineId: input.disciplineId,
     format: input.format,
     teamIds: input.teamIds,
     createdAt: serverTimestamp(),
+    ...ranking,
   });
 }
 
@@ -72,6 +121,10 @@ export async function updateTournament(
     format: TournamentFormat;
     teamIds: string[];
     groups: TournamentGroup[];
+    venue: string;
+    eventDate: string;
+    details: string;
+    podium: RankingPodium;
   },
 ) {
   await updateDoc(doc(db, TOURNAMENTS_COLLECTION, id), {
@@ -79,6 +132,13 @@ export async function updateTournament(
     format: input.format,
     teamIds: input.teamIds,
     groups: groupsPayload(input.groups),
+    ...rankingFields(input),
+  });
+}
+
+export async function saveRankingPodium(id: string, podium: RankingPodium) {
+  await updateDoc(doc(db, TOURNAMENTS_COLLECTION, id), {
+    podium: podiumPayload(podium),
   });
 }
 

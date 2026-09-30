@@ -190,6 +190,49 @@ function podiumFromLeague(
   };
 }
 
+function podiumFromRanking(
+  tournament: Tournament,
+  teams: Team[],
+): DisciplinePodium {
+  const places = [
+    tournament.podium.firstId,
+    tournament.podium.secondId,
+    tournament.podium.thirdId,
+  ] as const;
+  const slots = places.map((teamId, index) => {
+    const place = (index + 1) as PodiumPlace;
+    return teamId ? awardedSlot(place, teamId, teams) : emptySlot(place);
+  });
+  const missing = slots
+    .filter((slot) => !slot.teamId)
+    .map((slot) => placeWord(slot.place));
+  const details: string[] = [];
+
+  if (missing.length === 3) {
+    details.push(
+      "Cargá el 1.º, el 2.º y el 3.º para sumar en la tabla general.",
+    );
+  } else if (missing.length > 0) {
+    details.push(
+      `Falta cargar ${missing.map((place) => `el ${place}`).join(" y ")}.`,
+    );
+  }
+
+  if (slots.some((slot) => slot.teamId && !slot.houseId)) {
+    details.push(
+      "Hay un puesto de un equipo sin escuela: ese puntaje no entra en la tabla general.",
+    );
+  }
+
+  return {
+    tournamentId: tournament.id,
+    disciplineId: tournament.disciplineId,
+    format: tournament.format,
+    slots,
+    detail: details.length > 0 ? details.join(" ") : null,
+  };
+}
+
 function podiumForTournament(
   tournament: Tournament,
   matches: Match[],
@@ -199,6 +242,10 @@ function podiumForTournament(
 
   if (tournament.format === "todos-contra-todos-con-fixture") {
     return podiumFromLeague(tournament, matches, teams);
+  }
+
+  if (tournament.format === "todos-contra-todos-sin-fixture") {
+    return podiumFromRanking(tournament, teams);
   }
 
   if (tournament.format !== "dos-grupos-final") {

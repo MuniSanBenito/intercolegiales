@@ -8,6 +8,7 @@ import {
 import { DISCIPLINES } from "../../data/tournamentData";
 import { cycleLabel, houseName, type Team } from "../../helpers/teams";
 import {
+  isRankingFormat,
   isTournamentFormat,
   teamsForDiscipline,
   TOURNAMENT_FORMATS,
@@ -42,8 +43,12 @@ export function TournamentFormDialog({
 }) {
   const disciplineFieldId = useId();
   const formatFieldId = useId();
+  const venueFieldId = useId();
+  const dateFieldId = useId();
+  const detailsFieldId = useId();
   const teamsLabelId = useId();
   const eligibleTeams = teamsForDiscipline(teams, draft.disciplineId);
+  const ranking = draft.format !== "" && isRankingFormat(draft.format);
   const selectedCount = draft.teamIds.filter((teamId) =>
     eligibleTeams.some((team) => team.id === teamId),
   ).length;
@@ -104,6 +109,47 @@ export function TournamentFormDialog({
           ))}
         </select>
       </PanelField>
+      {ranking ? (
+        <>
+          <PanelField id={venueFieldId} label="Lugar">
+            <input
+              id={venueFieldId}
+              required
+              value={draft.venue}
+              onChange={(event) => {
+                const venue = event.target.value;
+                setDraft((current) => ({ ...current, venue }));
+              }}
+              className={panelFieldClassName}
+            />
+          </PanelField>
+          <PanelField id={dateFieldId} label="Fecha">
+            <input
+              id={dateFieldId}
+              type="date"
+              required
+              value={draft.eventDate}
+              onChange={(event) => {
+                const eventDate = event.target.value;
+                setDraft((current) => ({ ...current, eventDate }));
+              }}
+              className={`${panelFieldClassName} [color-scheme:dark]`}
+            />
+          </PanelField>
+          <PanelField id={detailsFieldId} label="Detalles">
+            <textarea
+              id={detailsFieldId}
+              rows={3}
+              value={draft.details}
+              onChange={(event) => {
+                const details = event.target.value;
+                setDraft((current) => ({ ...current, details }));
+              }}
+              className={`${panelFieldClassName} h-auto min-h-24 py-3`}
+            />
+          </PanelField>
+        </>
+      ) : null}
       <div className="grid gap-2">
         <p id={teamsLabelId} className="text-xs font-medium text-slate-300">
           Equipos
@@ -118,6 +164,12 @@ export function TournamentFormDialog({
             </span>
           ) : null}
         </p>
+        {ranking ? (
+          <p className="text-xs text-slate-500">
+            Hacen falta al menos tres equipos. El podio se carga cuando termine
+            la prueba.
+          </p>
+        ) : null}
         {draft.disciplineId ? (
           eligibleTeams.length === 0 ? (
             <p className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-3 text-sm text-slate-400">
