@@ -1,7 +1,7 @@
-import { ResultsBoard } from "../../../../components/resultados/ResultsBoard";
 import { PanelHeading } from "../../../../components/panel/PanelHeading";
 import { PanelLoading } from "../../../../components/panel/PanelLoading";
 import { PanelPage } from "../../../../components/panel/PanelPage";
+import { ResultsBoard } from "../../../../components/resultados/ResultsBoard";
 import { useResults } from "../../../../helpers/useResults";
 
 export function Component() {

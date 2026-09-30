@@ -9,13 +9,6 @@ const router = createBrowserRouter([
   {
     hydrateFallbackElement: <PageLoader />,
     errorElement: <div>Error!</div>,
-    loader: async () => {
-      const name = await fetch("/api/hello")
-        .then((res) => res.json() as Promise<{ message: string }>)
-        .then((data) => data.message)
-        .catch(() => "Error");
-      console.log("name haciendo fetch al worker desde main layout", name);
-    },
     children: [
       {
         index: true,
