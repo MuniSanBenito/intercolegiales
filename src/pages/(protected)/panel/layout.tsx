@@ -4,6 +4,7 @@ import {
   Home,
   LoaderCircle,
   LogOut,
+  Medal,
   Menu,
   School,
   Trophy,
@@ -16,6 +17,7 @@ import { auth } from "../../../lib/firebase";
 
 const navItems = [
   { label: "Inicio", to: "/panel", icon: Home, end: true },
+  { label: "Resultados", to: "/panel/resultados", icon: Medal, end: false },
   { label: "Escuelas", to: "/panel/escuelas", icon: School, end: false },
   {
     label: "Disciplinas",
