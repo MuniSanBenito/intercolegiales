@@ -31,3 +31,11 @@ dist-ssr
 .anotaciones.md
 
 .env
+
+# lockfiles
+package-lock.json
+npm-shrinkwrap.json
+bun.lock
+bun.lockb
+pnpm-lock.yaml
+yarn.lock
