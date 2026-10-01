@@ -15,6 +15,7 @@ import {
 } from "../../../../../components/torneos/FixtureMatches";
 import { FixtureRegenerateDialog } from "../../../../../components/torneos/FixtureRegenerateDialog";
 import { FixtureStandings } from "../../../../../components/torneos/FixtureStandings";
+import { KnockoutFixture } from "../../../../../components/torneos/KnockoutFixture";
 import { LeagueFixture } from "../../../../../components/torneos/LeagueFixture";
 import { RankingResult } from "../../../../../components/torneos/RankingResult";
 import { groupMatches } from "../../../../../helpers/fixtures";
@@ -103,6 +104,25 @@ export function Component() {
 
   if (tournament.format === "todos-contra-todos-sin-fixture") {
     return <RankingResult tournament={tournament} teams={admin.teams} />;
+  }
+
+  if (tournament.format === "eliminatoria-directa") {
+    return (
+      <KnockoutFixture
+        tournament={tournament}
+        teams={admin.teams}
+        matches={admin.matches}
+        seeds={admin.seeds}
+        generating={admin.generating}
+        generateError={admin.generateError}
+        hasMatches={admin.matches.length > 0}
+        hasResults={admin.knockoutResults}
+        regenerateDialogRef={admin.regenerateDialogRef}
+        onMoveSeed={admin.moveSeed}
+        onGenerate={() => admin.requestKnockoutGenerate()}
+        onConfirmGenerate={() => admin.confirmKnockoutGenerate()}
+      />
+    );
   }
 
   if (tournament.format !== "dos-grupos-final") {

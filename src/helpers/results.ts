@@ -1,13 +1,11 @@
 import { HOUSES } from "../data/tournamentData";
 import {
-  groupMatches,
+  decideBracketMatch,
   isPlayed,
   knockoutMatch,
   leagueMatches,
   resolveGroupPlace,
   type Match,
-  type MatchSide,
-  type PlaceResolution,
 } from "./fixtures";
 import { disciplineName, houseName, type Team } from "./teams";
 import type {
@@ -46,57 +44,21 @@ export interface SchoolScore {
   rank: number | null;
 }
 
-function resolveSide(
-  side: MatchSide,
-  groups: TournamentGroup[],
-  matches: Match[],
-): PlaceResolution {
-  if (side.kind === "team") return { status: "team", teamId: side.teamId };
-
-  const group = groups.find((item) => item.id === side.groupId);
-  return resolveGroupPlace(
-    group?.teamIds ?? [],
-    groupMatches(matches, side.groupId),
-    side.place,
-  );
-}
-
-type KnockoutDecision =
-  | { status: "pending" }
-  | { status: "blocked"; reason: string }
-  | { status: "decided"; winnerId: string; loserId: string };
-
 function decideMatch(
   match: Match | undefined,
   groups: TournamentGroup[],
   matches: Match[],
   blockedLabel: string,
   drawLabel: string,
-): KnockoutDecision {
-  if (!match || !isPlayed(match)) return { status: "pending" };
-
-  const home = resolveSide(match.home, groups, matches);
-  const away = resolveSide(match.away, groups, matches);
-
-  if (home.status !== "team" || away.status !== "team") {
-    if (home.status === "pending" || away.status === "pending") {
-      return { status: "pending" };
-    }
-
-    return { status: "blocked", reason: blockedLabel };
-  }
-
-  if (match.homeScore === match.awayScore) {
-    return { status: "blocked", reason: drawLabel };
-  }
-
-  const homeWins = (match.homeScore ?? 0) > (match.awayScore ?? 0);
-
-  return {
-    status: "decided",
-    winnerId: homeWins ? home.teamId : away.teamId,
-    loserId: homeWins ? away.teamId : home.teamId,
-  };
+) {
+  return decideBracketMatch(
+    match,
+    groups,
+    matches,
+    new Set(),
+    blockedLabel,
+    drawLabel,
+  );
 }
 
 function emptySlot(place: PodiumPlace): PodiumSlot {
@@ -233,6 +195,100 @@ function podiumFromRanking(
   };
 }
 
+function podiumFromElimination(
+  tournament: Tournament,
+  matches: Match[],
+  teams: Team[],
+): DisciplinePodium {
+  const slots = [emptySlot(1), emptySlot(2), emptySlot(3)];
+  const details: string[] = [];
+  const finalMatch = matches.find((match) => match.stage === "final");
+  const thirdMatch = matches.find((match) => match.stage === "tercer-puesto");
+
+  if (!finalMatch) {
+    return {
+      tournamentId: tournament.id,
+      disciplineId: tournament.disciplineId,
+      format: tournament.format,
+      slots,
+      detail: "Generá el cuadro para definir el podio.",
+    };
+  }
+
+  const finalDecision = decideMatch(
+    finalMatch,
+    tournament.groups,
+    matches,
+    "Todavía no están los dos equipos de la final, así que no se definen el 1.º ni el 2.º.",
+    "La final terminó empatada. Indicá quién pasó para definir el 1.º y el 2.º.",
+  );
+
+  if (finalDecision.status === "decided") {
+    slots[0] = awardedSlot(1, finalDecision.winnerId, teams);
+    slots[1] = awardedSlot(2, finalDecision.loserId, teams);
+  } else if (finalDecision.status === "blocked") {
+    details.push(finalDecision.reason);
+  } else {
+    details.push("El 1.º y el 2.º se definen cuando la final tiene ganador.");
+  }
+
+  if (thirdMatch) {
+    const thirdDecision = decideMatch(
+      thirdMatch,
+      tournament.groups,
+      matches,
+      "Todavía no están los dos equipos del 3.º puesto, así que no se define el 3.º.",
+      "El partido por el 3.º y 4.º puesto terminó empatado. Indicá quién pasó para definir el 3.º.",
+    );
+
+    if (thirdDecision.status === "decided") {
+      slots[2] = awardedSlot(3, thirdDecision.winnerId, teams);
+    } else if (thirdDecision.status === "blocked") {
+      details.push(thirdDecision.reason);
+    } else {
+      details.push(
+        "El 3.º se define cuando el partido por el 3.º y 4.º puesto tiene ganador.",
+      );
+    }
+  } else {
+    const prior = matches.filter((match) => match.stage === "eliminatoria");
+
+    if (prior.length === 1) {
+      const semiDecision = decideMatch(
+        prior[0],
+        tournament.groups,
+        matches,
+        "La semifinal no define el 3.º.",
+        "La semifinal terminó empatada. Indicá quién pasó para definir el 3.º.",
+      );
+
+      if (semiDecision.status === "decided") {
+        slots[2] = awardedSlot(3, semiDecision.loserId, teams);
+      } else if (semiDecision.status === "blocked") {
+        details.push(semiDecision.reason);
+      } else {
+        details.push("El 3.º es el perdedor de la semifinal.");
+      }
+    } else {
+      details.push("Con dos equipos no hay partido por el 3.º.");
+    }
+  }
+
+  if (slots.some((slot) => slot.teamId && !slot.houseId)) {
+    details.push(
+      "Hay un puesto de un equipo sin escuela: ese puntaje no entra en la tabla general.",
+    );
+  }
+
+  return {
+    tournamentId: tournament.id,
+    disciplineId: tournament.disciplineId,
+    format: tournament.format,
+    slots,
+    detail: details.length > 0 ? details.join(" ") : null,
+  };
+}
+
 function podiumForTournament(
   tournament: Tournament,
   matches: Match[],
@@ -246,6 +302,10 @@ function podiumForTournament(
 
   if (tournament.format === "todos-contra-todos-sin-fixture") {
     return podiumFromRanking(tournament, teams);
+  }
+
+  if (tournament.format === "eliminatoria-directa") {
+    return podiumFromElimination(tournament, matches, teams);
   }
 
   if (tournament.format !== "dos-grupos-final") {

@@ -2,14 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import {
   groupMatches,
   isPlayed,
+  moveSeedOrder,
   moveTeamToGroup,
   sameGroupAssignment,
+  sameSeedOrder,
+  validateEliminationFixture,
   validateFixtureGroups,
   validateLeagueFixture,
   venueForDiscipline,
   type Match,
 } from "./fixtures";
 import {
+  generateEliminationFixture,
   generateFixture,
   generateLeagueFixture,
   subscribeMatches,
@@ -18,6 +22,7 @@ import type { Team } from "./teams";
 import { subscribeTeams } from "./teamsFirestore";
 import {
   emptyTournamentGroups,
+  pruneSeeds,
   pruneTournamentGroups,
   type GroupId,
   type Tournament,
@@ -25,6 +30,7 @@ import {
 } from "./tournaments";
 import {
   saveTournamentGroups,
+  saveTournamentSeeds,
   subscribeTournaments,
 } from "./tournamentsFirestore";
 
@@ -52,6 +58,8 @@ export function useFixtureAdmin(tournamentId: string) {
     null,
   );
   const [seenDraftKey, setSeenDraftKey] = useState<string | null>(null);
+  const [seedsDraft, setSeedsDraft] = useState<string[] | null>(null);
+  const [seenSeedsKey, setSeenSeedsKey] = useState<string | null>(null);
   const [savingGroups, setSavingGroups] = useState(false);
   const [groupsError, setGroupsError] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -119,6 +127,18 @@ export function useFixtureAdmin(tournamentId: string) {
   const groupsDirty = tournament
     ? !sameGroupAssignment(groups, tournament.groups)
     : false;
+  const savedSeeds = tournament
+    ? pruneSeeds(tournament.seeds, tournament.teamIds)
+    : [];
+  const seedsKey = tournament ? `${tournament.id}:${savedSeeds.join("|")}` : "";
+
+  if (seenSeedsKey !== seedsKey) {
+    setSeenSeedsKey(seedsKey);
+    setSeedsDraft(tournament ? savedSeeds : null);
+  }
+
+  const seeds = seedsDraft ?? savedSeeds;
+  const seedsDirty = tournament ? !sameSeedOrder(seeds, savedSeeds) : false;
   const hasGroupMatches = matches.some((match) => match.stage === "grupos");
   const groupResults = matches.some(
     (match) => match.stage === "grupos" && isPlayed(match),
@@ -245,6 +265,57 @@ export function useFixtureAdmin(tournamentId: string) {
     return runLeagueGenerate();
   };
 
+  const runKnockoutGenerate = async () => {
+    if (!tournament || generating) return false;
+
+    const ordered = pruneSeeds(seeds, tournament.teamIds);
+    setGenerating(true);
+    setGenerateError(null);
+
+    try {
+      await saveTournamentSeeds(tournament.id, ordered);
+      await generateEliminationFixture(
+        tournament.id,
+        ordered,
+        matches,
+        venueForDiscipline(tournament.disciplineId),
+      );
+      if (regenerateDialogRef.current?.open) {
+        regenerateDialogRef.current.close();
+      }
+      return true;
+    } catch {
+      setGenerateError("No se pudo armar el cuadro. Intentá de nuevo.");
+      return false;
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const requestKnockoutGenerate = async () => {
+    if (!tournament || generating) return false;
+
+    const validationError = validateEliminationFixture(tournament);
+    if (validationError) {
+      setGenerateError(validationError);
+      return false;
+    }
+
+    if (matches.length > 0) {
+      regenerateDialogRef.current?.showModal();
+      return false;
+    }
+
+    return runKnockoutGenerate();
+  };
+
+  const moveSeed = (teamId: string, direction: -1 | 1) => {
+    setGenerateError(null);
+    setSeedsDraft((current) =>
+      moveSeedOrder(current ?? seeds, teamId, direction),
+    );
+  };
+
   return {
     loading: !tournamentsReady || !teamsReady || !matchesReady,
     tournament,
@@ -267,6 +338,12 @@ export function useFixtureAdmin(tournamentId: string) {
     confirmGenerate: runGenerate,
     requestLeagueGenerate,
     confirmLeagueGenerate: runLeagueGenerate,
+    seeds,
+    seedsDirty,
+    knockoutResults: matches.some(isPlayed),
+    moveSeed,
+    requestKnockoutGenerate,
+    confirmKnockoutGenerate: runKnockoutGenerate,
     groupMatches: (groupId: GroupId) => groupMatches(matches, groupId),
   };
 }

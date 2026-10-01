@@ -8,6 +8,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import {
+  buildEliminationMatchDrafts,
   buildGroupMatchDrafts,
   buildKnockoutMatchDrafts,
   buildLeagueMatchDrafts,
@@ -39,6 +40,7 @@ function matchPayload(match: MatchDraft) {
     away: match.away,
   };
 
+  if (match.matchKey) payload.matchKey = match.matchKey;
   if (match.groupId) payload.groupId = match.groupId;
   if (match.round) payload.round = match.round;
   if (match.complexId) payload.complexId = match.complexId;
@@ -114,6 +116,26 @@ export async function generateLeagueFixture(
   await batch.commit();
 }
 
+export async function generateEliminationFixture(
+  tournamentId: string,
+  teamIds: string[],
+  existing: Match[],
+  venue: MatchVenue,
+) {
+  const batch = writeBatch(db);
+  const parent = matchesCollection(tournamentId);
+
+  for (const match of existing) {
+    batch.delete(doc(parent, match.id));
+  }
+
+  for (const match of buildEliminationMatchDrafts(teamIds, venue)) {
+    batch.set(doc(parent), matchPayload(match));
+  }
+
+  await batch.commit();
+}
+
 export async function updateMatchSchedule(
   tournamentId: string,
   matchId: string,
@@ -123,6 +145,7 @@ export async function updateMatchSchedule(
     startsAt: string;
     homeScore: string;
     awayScore: string;
+    advancedTeamId?: string;
   },
 ) {
   const startsAt = input.startsAt.trim();
@@ -133,6 +156,9 @@ export async function updateMatchSchedule(
   const homeScore = parseScoreInput(input.homeScore);
   const awayScore = parseScoreInput(input.awayScore);
   const court = input.court.trim();
+  const tied =
+    homeScore !== null && awayScore !== null && homeScore === awayScore;
+  const advancedTeamId = input.advancedTeamId?.trim() ?? "";
 
   await updateDoc(doc(matchesCollection(tournamentId), matchId), {
     complexId: input.complexId || deleteField(),
@@ -140,5 +166,6 @@ export async function updateMatchSchedule(
     startsAt: startsAt || deleteField(),
     homeScore: homeScore === null ? deleteField() : homeScore,
     awayScore: awayScore === null ? deleteField() : awayScore,
+    advancedTeamId: tied && advancedTeamId ? advancedTeamId : deleteField(),
   });
 }

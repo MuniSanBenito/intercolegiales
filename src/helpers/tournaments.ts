@@ -63,6 +63,7 @@ export interface Tournament {
   format: TournamentFormat;
   teamIds: string[];
   groups: TournamentGroup[];
+  seeds: string[];
   event: RankingEvent | null;
   podium: RankingPodium;
 }
@@ -105,6 +106,22 @@ export function emptyTournamentGroups(): TournamentGroup[] {
     { id: "A", name: "Grupo A", teamIds: [] },
     { id: "B", name: "Grupo B", teamIds: [] },
   ];
+}
+
+export function pruneSeeds(seeds: string[], teamIds: string[]) {
+  const allowed = new Set(teamIds);
+  const seen = new Set<string>();
+  const next = seeds.filter((teamId) => {
+    if (!allowed.has(teamId) || seen.has(teamId)) return false;
+    seen.add(teamId);
+    return true;
+  });
+
+  for (const teamId of teamIds) {
+    if (!seen.has(teamId)) next.push(teamId);
+  }
+
+  return next;
 }
 
 export function pruneTournamentGroups(
@@ -191,6 +208,12 @@ export function parseTournament(
     format: data.format,
     teamIds,
     groups: parseGroups(data.groups, teamIds),
+    seeds: pruneSeeds(
+      Array.isArray(data.seeds)
+        ? data.seeds.filter((teamId) => typeof teamId === "string")
+        : [],
+      teamIds,
+    ),
     event: parseRankingEvent(data.format, data),
     podium: isRankingFormat(data.format)
       ? parseRankingPodium(data.podium, teamIds)

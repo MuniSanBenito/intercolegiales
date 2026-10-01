@@ -18,15 +18,23 @@ export const COMPLEXES = [
 
 export type ComplexId = (typeof COMPLEXES)[number]["id"];
 
-export type MatchStage = "grupos" | "liga" | "final" | "tercer-puesto";
+export type MatchStage =
+  | "grupos"
+  | "liga"
+  | "eliminatoria"
+  | "final"
+  | "tercer-puesto";
 
 export type MatchSide =
   | { kind: "team"; teamId: string }
-  | { kind: "group-place"; groupId: GroupId; place: 1 | 2 };
+  | { kind: "group-place"; groupId: GroupId; place: 1 | 2 }
+  | { kind: "winner"; matchKey: string }
+  | { kind: "loser"; matchKey: string };
 
 export interface Match {
   id: string;
   stage: MatchStage;
+  matchKey?: string;
   groupId?: GroupId;
   round?: number;
   order: number;
@@ -37,10 +45,12 @@ export interface Match {
   startsAt?: string;
   homeScore?: number;
   awayScore?: number;
+  advancedTeamId?: string;
 }
 
 export interface MatchDraft {
   stage: MatchStage;
+  matchKey?: string;
   groupId?: GroupId;
   round?: number;
   order: number;
@@ -206,6 +216,122 @@ export function buildLeagueMatchDrafts(
   );
 }
 
+function bracketSize(teamCount: number) {
+  let size = 1;
+  while (size < teamCount) size *= 2;
+  return size;
+}
+
+export function bracketSeedPositions(size: number) {
+  let slots = [1];
+
+  while (slots.length < size) {
+    const span = slots.length * 2 + 1;
+    const next: number[] = [];
+    for (const seed of slots) next.push(seed, span - seed);
+    slots = next;
+  }
+
+  return slots;
+}
+
+export function eliminationRoundLabel(slotCount: number) {
+  if (slotCount <= 4) return "Semifinal";
+  if (slotCount === 8) return "Cuartos de final";
+  if (slotCount === 16) return "Octavos de final";
+  if (slotCount === 32) return "16avos de final";
+  if (slotCount === 64) return "32avos de final";
+  return `Ronda de ${slotCount}`;
+}
+
+export function buildEliminationMatchDrafts(
+  teamIds: string[],
+  venue: MatchVenue,
+): MatchDraft[] {
+  if (teamIds.length < 2) return [];
+
+  const size = bracketSize(teamIds.length);
+  let slots: Array<MatchSide | null> = bracketSeedPositions(size).map(
+    (seed) => {
+      const teamId = teamIds[seed - 1];
+      return teamId ? { kind: "team", teamId } : null;
+    },
+  );
+  const drafts: MatchDraft[] = [];
+  let roundIndex = 1;
+  let semiKeys: string[] = [];
+
+  while (slots.length > 2) {
+    const slotCount = slots.length;
+    const next: Array<MatchSide | null> = [];
+    const roundKeys: string[] = [];
+
+    for (let index = 0; index < slots.length; index += 2) {
+      const home = slots[index] ?? null;
+      const away = slots[index + 1] ?? null;
+
+      if (home && away) {
+        const matchKey = `r${roundIndex}-${roundKeys.length}`;
+        roundKeys.push(matchKey);
+        drafts.push(
+          withVenue(
+            {
+              stage: "eliminatoria",
+              matchKey,
+              round: slotCount,
+              order: drafts.length,
+              home,
+              away,
+            },
+            venue,
+          ),
+        );
+        next.push({ kind: "winner", matchKey });
+      } else {
+        next.push(home ?? away);
+      }
+    }
+
+    if (next.length === 2) semiKeys = roundKeys;
+    slots = next;
+    roundIndex += 1;
+  }
+
+  const home = slots[0];
+  const away = slots[1];
+  if (!home || !away) return drafts;
+
+  drafts.push(
+    withVenue(
+      {
+        stage: "final",
+        matchKey: "final",
+        order: drafts.length,
+        home,
+        away,
+      },
+      venue,
+    ),
+  );
+
+  if (semiKeys.length === 2) {
+    drafts.push(
+      withVenue(
+        {
+          stage: "tercer-puesto",
+          matchKey: "third",
+          order: drafts.length,
+          home: { kind: "loser", matchKey: semiKeys[0] },
+          away: { kind: "loser", matchKey: semiKeys[1] },
+        },
+        venue,
+      ),
+    );
+  }
+
+  return drafts;
+}
+
 export function buildKnockoutMatchDrafts(venue: MatchVenue): MatchDraft[] {
   return [
     withVenue(
@@ -269,6 +395,39 @@ export function sameGroupAssignment(
       .join("|");
 
   return signature(left) === signature(right);
+}
+
+export function moveSeedOrder(
+  seeds: string[],
+  teamId: string,
+  direction: -1 | 1,
+) {
+  const index = seeds.indexOf(teamId);
+  const target = index + direction;
+  if (index < 0 || target < 0 || target >= seeds.length) return seeds;
+
+  const next = [...seeds];
+  const [moved] = next.splice(index, 1);
+  next.splice(target, 0, moved);
+  return next;
+}
+
+export function sameSeedOrder(left: string[], right: string[]) {
+  return left.join("|") === right.join("|");
+}
+
+export function validateEliminationFixture(
+  tournament: Tournament,
+): string | null {
+  if (tournament.format !== "eliminatoria-directa") {
+    return "Este formato todavía no arma fixture.";
+  }
+
+  if (tournament.teamIds.length < 2) {
+    return "Inscribí al menos 2 equipos.";
+  }
+
+  return null;
 }
 
 export function validateLeagueFixture(tournament: Tournament): string | null {
@@ -502,10 +661,96 @@ export function resolveGroupPlace(
   return { status: "pending" };
 }
 
+export type BracketDecision =
+  | { status: "pending" }
+  | { status: "blocked"; reason: string }
+  | { status: "decided"; winnerId: string; loserId: string };
+
+export function resolveMatchSide(
+  side: MatchSide,
+  groups: TournamentGroup[],
+  matches: Match[],
+  trail: Set<string> = new Set(),
+): PlaceResolution {
+  if (side.kind === "team") return { status: "team", teamId: side.teamId };
+
+  if (side.kind === "group-place") {
+    const group = groups.find((item) => item.id === side.groupId);
+    return resolveGroupPlace(
+      group?.teamIds ?? [],
+      groupMatches(matches, side.groupId),
+      side.place,
+    );
+  }
+
+  if (trail.has(side.matchKey)) return { status: "pending" };
+
+  const source = matches.find((match) => match.matchKey === side.matchKey);
+  if (!source) return { status: "pending" };
+
+  const nextTrail = new Set(trail);
+  nextTrail.add(side.matchKey);
+  const decision = decideBracketMatch(source, groups, matches, nextTrail);
+
+  if (decision.status !== "decided") return { status: "pending" };
+
+  return {
+    status: "team",
+    teamId: side.kind === "winner" ? decision.winnerId : decision.loserId,
+  };
+}
+
+export function decideBracketMatch(
+  match: Match | undefined,
+  groups: TournamentGroup[],
+  matches: Match[],
+  trail: Set<string> = new Set(),
+  blockedLabel = "Este partido todavía no define quién avanza.",
+  drawLabel = "El partido terminó empatado. Indicá quién pasó.",
+): BracketDecision {
+  if (!match || !isPlayed(match)) return { status: "pending" };
+
+  const home = resolveMatchSide(match.home, groups, matches, trail);
+  const away = resolveMatchSide(match.away, groups, matches, trail);
+
+  if (home.status !== "team" || away.status !== "team") {
+    if (home.status === "pending" || away.status === "pending") {
+      return { status: "pending" };
+    }
+
+    return { status: "blocked", reason: blockedLabel };
+  }
+
+  if (match.homeScore === match.awayScore) {
+    if (
+      match.advancedTeamId === home.teamId ||
+      match.advancedTeamId === away.teamId
+    ) {
+      const winnerId = match.advancedTeamId;
+      return {
+        status: "decided",
+        winnerId,
+        loserId: winnerId === home.teamId ? away.teamId : home.teamId,
+      };
+    }
+
+    return { status: "blocked", reason: drawLabel };
+  }
+
+  const homeWins = (match.homeScore ?? 0) > (match.awayScore ?? 0);
+
+  return {
+    status: "decided",
+    winnerId: homeWins ? home.teamId : away.teamId,
+    loserId: homeWins ? away.teamId : home.teamId,
+  };
+}
+
 export function stageLabel(stage: MatchStage) {
   if (stage === "final") return "Final";
   if (stage === "tercer-puesto") return "3.º y 4.º puesto";
   if (stage === "liga") return "Todos contra todos";
+  if (stage === "eliminatoria") return "Eliminatoria";
   return "Fase de grupos";
 }
 
@@ -534,10 +779,19 @@ function parseSide(value: unknown): MatchSide | null {
     teamId?: unknown;
     groupId?: unknown;
     place?: unknown;
+    matchKey?: unknown;
   };
 
   if (side.kind === "team" && typeof side.teamId === "string") {
     return { kind: "team", teamId: side.teamId };
+  }
+
+  if (
+    (side.kind === "winner" || side.kind === "loser") &&
+    typeof side.matchKey === "string" &&
+    side.matchKey.trim()
+  ) {
+    return { kind: side.kind, matchKey: side.matchKey };
   }
 
   if (
@@ -564,6 +818,7 @@ export function parseMatch(
     !away ||
     (stage !== "grupos" &&
       stage !== "liga" &&
+      stage !== "eliminatoria" &&
       stage !== "final" &&
       stage !== "tercer-puesto") ||
     typeof data.order !== "number"
@@ -573,15 +828,25 @@ export function parseMatch(
 
   const match: Match = { id, stage, order: data.order, home, away };
 
+  if (typeof data.matchKey === "string" && data.matchKey.trim()) {
+    match.matchKey = data.matchKey;
+  }
+
   if (stage === "grupos") {
     if (!isGroupId(data.groupId) || typeof data.round !== "number") return null;
     match.groupId = data.groupId;
     match.round = data.round;
   }
 
-  if (stage === "liga") {
+  if (stage === "liga" || stage === "eliminatoria") {
     if (typeof data.round !== "number") return null;
     match.round = data.round;
+  }
+
+  if (stage === "eliminatoria" && !match.matchKey) return null;
+
+  if (typeof data.advancedTeamId === "string" && data.advancedTeamId.trim()) {
+    match.advancedTeamId = data.advancedTeamId;
   }
 
   if (isComplexId(data.complexId)) match.complexId = data.complexId;

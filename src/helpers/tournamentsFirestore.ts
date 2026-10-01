@@ -132,8 +132,15 @@ export async function updateTournament(
     format: input.format,
     teamIds: input.teamIds,
     groups: groupsPayload(input.groups),
+    ...(input.format === "eliminatoria-directa"
+      ? {}
+      : { seeds: deleteField() }),
     ...rankingFields(input),
   });
+}
+
+export async function saveTournamentSeeds(id: string, seeds: string[]) {
+  await updateDoc(doc(db, TOURNAMENTS_COLLECTION, id), { seeds });
 }
 
 export async function saveRankingPodium(id: string, podium: RankingPodium) {
