@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, MotionConfig } from 'motion/react';
 import { Gamepad2, ShieldAlert, MapPin } from 'lucide-react';
+import { Link, useLocation } from 'react-router';
 import { sound } from '../lib/sound';
 
 const InstagramIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
@@ -22,6 +23,9 @@ const InstagramIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4"
 );
 
 export const Footer: React.FC = () => {
+  const { pathname } = useLocation();
+  const sectionHref = (hash: string) => (pathname === '/' ? hash : `/${hash}`);
+
   return (
     <MotionConfig reducedMotion="user">
       <motion.footer
@@ -73,22 +77,27 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm font-mono">
               <li>
-                <a href="#Escuelas" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
+                <a href={sectionHref('#Escuelas')} onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Las 5 Escuelas
                 </a>
               </li>
               <li>
-                <a href="#disciplinas" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
+                <a href={sectionHref('#disciplinas')} onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Deportes & Área Cultural
                 </a>
               </li>
               <li>
-                <a href="#inscripciones" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
+                <Link to="/torneos" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
+                  ✦ Torneos
+                </Link>
+              </li>
+              <li>
+                <a href={sectionHref('#inscripciones')} onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Inscripciones Oficiales
                 </a>
               </li>
               <li>
-                <a href="#posiciones" onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
+                <a href={sectionHref('#posiciones')} onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
                   ✦ Tabla de Posiciones
                 </a>
               </li>

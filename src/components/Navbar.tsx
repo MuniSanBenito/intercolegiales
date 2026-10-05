@@ -1,16 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { motion, MotionConfig } from 'motion/react';
-import { Gamepad2, Shield, Menu, X, Volume2, VolumeX, UserCheck, MapPin } from 'lucide-react';
+import { Gamepad2, Shield, Menu, X, Volume2, VolumeX, UserCheck, MapPin, Trophy } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Link, NavLink, useLocation } from 'react-router';
 import { sound, getSoundEnabled, setSoundEnabled as persistSound } from '../lib/sound';
 
 interface NavbarProps {
   onOpenLocation: () => void;
 }
 
+type NavItem = {
+  name: string;
+  icon: LucideIcon;
+  href?: string;
+  to?: string;
+  onClick?: () => void;
+};
+
+const linkClassName =
+  'flex items-center gap-1.5 px-2.5 py-2 text-sm font-medium rounded-lg border transition-all duration-150';
+
 export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
+  const { pathname } = useLocation();
+  const onHome = pathname === '/';
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => getSoundEnabled());
+  const solid = isScrolled || !onHome;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,12 +37,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
   }, []);
 
   const playClickSound = () => sound.click();
+  const sectionHref = (hash: string) => (onHome ? hash : `/${hash}`);
 
-  const navLinks = [
-    { name: 'Escuelas', href: '#Escuelas', icon: Shield },
-    { name: 'Disciplinas', href: '#disciplinas', icon: Gamepad2 },
-    { name: 'Inscripciones', href: '#inscripciones', icon: UserCheck },
-    { name: 'Ubicación', href: '#ubicacion', icon: MapPin, onClick: onOpenLocation },
+  const navLinks: NavItem[] = [
+    { name: 'Escuelas', href: sectionHref('#Escuelas'), icon: Shield },
+    { name: 'Disciplinas', href: sectionHref('#disciplinas'), icon: Gamepad2 },
+    { name: 'Torneos', to: '/torneos', icon: Trophy },
+    { name: 'Inscripciones', href: sectionHref('#inscripciones'), icon: UserCheck },
+    { name: 'Ubicación', href: sectionHref('#ubicacion'), icon: MapPin, onClick: onOpenLocation },
   ];
 
   return (
@@ -36,17 +54,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+        solid
           ? 'bg-[#08090e]/90 backdrop-blur-md border-b border-cyan-500/20 py-3 shadow-lg shadow-cyan-950/20'
           : 'bg-transparent py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Brand Logo */}
-        <a
-          href="#"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
+        <Link
+          to="/"
           onClick={playClickSound}
-          className="flex items-center gap-3 group focus:outline-none"
+          className="flex items-center gap-3 group focus:outline-none shrink-0"
         >
           <div className="relative w-11 h-11 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-xl p-[2px] shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-200">
             <div className="w-full h-full bg-[#0d0f1a] rounded-[10px] flex items-center justify-center">
@@ -68,12 +85,33 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
               5 AL 9 OCT // 10 A 15 HS
             </span>
           </div>
-        </a>
+        </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2">
+        <nav className="hidden xl:flex items-center gap-1" aria-label="Secciones del sitio">
           {navLinks.map((link) => {
             const Icon = link.icon;
+            if (link.to) {
+              return (
+                <NavLink
+                  key={link.name}
+                  to={link.to}
+                  onClick={playClickSound}
+                  onMouseEnter={() => sound.hover()}
+                  onFocus={() => sound.hover()}
+                  className={({ isActive }) =>
+                    `${linkClassName} ${
+                      isActive
+                        ? 'text-cyan-300 bg-cyan-500/10 border-cyan-500/30'
+                        : 'text-slate-300 border-transparent hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30'
+                    }`
+                  }
+                >
+                  <Icon className="w-4 h-4 text-cyan-400/80" />
+                  <span>{link.name}</span>
+                </NavLink>
+              );
+            }
+
             return (
               <a
                 key={link.name}
@@ -87,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
                 }}
                 onMouseEnter={() => sound.hover()}
                 onFocus={() => sound.hover()}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-300 hover:text-cyan-300 hover:bg-cyan-500/10 rounded-lg border border-transparent hover:border-cyan-500/30 transition-all duration-150"
+                className={`${linkClassName} text-slate-300 border-transparent hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30`}
               >
                 <Icon className="w-4 h-4 text-cyan-400/80" />
                 <span>{link.name}</span>
@@ -96,9 +134,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
           })}
         </nav>
 
-        {/* Action Buttons */}
         <div className="hidden sm:flex items-center gap-3">
-          {/* Location Quick Button */}
           <button
             onClick={() => {
               playClickSound();
@@ -112,7 +148,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
             <MapPin className="w-4 h-4 text-emerald-400" />
           </button>
 
-          {/* Sound Toggle */}
           <button
             onClick={() => {
               const next = !soundEnabled;
@@ -126,9 +161,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
             {soundEnabled ? <Volume2 className="w-4 h-4 text-cyan-400" /> : <VolumeX className="w-4 h-4" />}
           </button>
 
-          {/* Inscription CTA */}
           <a
-            href="#inscripciones"
+            href={sectionHref('#inscripciones')}
             onClick={playClickSound}
             onMouseEnter={() => sound.hover()}
             onFocus={() => sound.hover()}
@@ -140,8 +174,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
           </a>
         </div>
 
-        {/* Mobile menu trigger */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 xl:hidden">
           <button
             type="button"
             aria-expanded={mobileMenuOpen}
@@ -155,11 +188,33 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div id="mobile-navigation" className="md:hidden bg-[#0a0b12]/95 backdrop-blur-xl border-b border-cyan-500/30 px-4 pt-3 pb-6 space-y-2 animate-slide-down">
+        <div id="mobile-navigation" className="xl:hidden bg-[#0a0b12]/95 backdrop-blur-xl border-b border-cyan-500/30 px-4 pt-3 pb-6 space-y-2 animate-slide-down">
           {navLinks.map((link) => {
             const Icon = link.icon;
+            const className =
+              'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-200 hover:bg-cyan-500/15 hover:text-cyan-300 border border-slate-800';
+
+            if (link.to) {
+              return (
+                <NavLink
+                  key={link.name}
+                  to={link.to}
+                  onClick={() => {
+                    playClickSound();
+                    setMobileMenuOpen(false);
+                  }}
+                  onMouseEnter={() => sound.hover()}
+                  className={({ isActive }) =>
+                    `${className} ${isActive ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30' : ''}`
+                  }
+                >
+                  <Icon className="w-5 h-5 text-cyan-400" />
+                  <span>{link.name}</span>
+                </NavLink>
+              );
+            }
+
             return (
               <a
                 key={link.name}
@@ -173,7 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
                   }
                 }}
                 onMouseEnter={() => sound.hover()}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-slate-200 hover:bg-cyan-500/15 hover:text-cyan-300 border border-slate-800"
+                className={className}
               >
                 <Icon className="w-5 h-5 text-cyan-400" />
                 <span>{link.name}</span>
@@ -196,7 +251,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLocation }) => {
             </button>
 
             <a
-              href="#inscripciones"
+              href={sectionHref('#inscripciones')}
               onClick={() => {
                 playClickSound();
                 setMobileMenuOpen(false);
