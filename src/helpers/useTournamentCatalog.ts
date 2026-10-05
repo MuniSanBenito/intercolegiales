@@ -10,10 +10,7 @@ export function isTournamentPublished(
   tournament: Tournament,
   matches: Match[],
 ) {
-  if (isRankingFormat(tournament.format)) {
-    const { firstId, secondId, thirdId } = tournament.podium;
-    return Boolean(firstId && secondId && thirdId);
-  }
+  if (isRankingFormat(tournament.format)) return true;
 
   return matches.length > 0;
 }

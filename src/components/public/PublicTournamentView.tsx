@@ -169,6 +169,8 @@ function RankingView({
   teams: Team[];
 }) {
   const event = tournament.event;
+  const { firstId, secondId, thirdId } = tournament.podium;
+  const hasResult = Boolean(firstId && secondId && thirdId);
 
   return (
     <div className="mt-6 flex flex-col gap-4">
@@ -202,37 +204,39 @@ function RankingView({
         </dl>
       </section>
 
-      <section className="rounded-2xl border border-cyan-500/30 bg-[#0c0e1a]/90 p-4">
-        <h2 className="font-cyber text-sm font-black tracking-widest text-white uppercase">
-          Podio
-        </h2>
-        <ol className="mt-3 flex flex-col gap-2">
-          {PODIUM_PLACES.map((item) => {
-            const teamId = tournament.podium[item.key];
-            const team = teams.find((entry) => entry.id === teamId);
+      {hasResult ? (
+        <section className="rounded-2xl border border-cyan-500/30 bg-[#0c0e1a]/90 p-4">
+          <h2 className="font-cyber text-sm font-black tracking-widest text-white uppercase">
+            Podio
+          </h2>
+          <ol className="mt-3 flex flex-col gap-2">
+            {PODIUM_PLACES.map((item) => {
+              const teamId = tournament.podium[item.key];
+              const team = teams.find((entry) => entry.id === teamId);
 
-            return (
-              <li
-                key={item.key}
-                className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2"
-              >
-                <p className="text-[11px] font-semibold tracking-wide text-cyan-300 uppercase">
-                  {placeWord(item.place)}
-                  <span className="mx-1.5 text-slate-600" aria-hidden="true">
-                    ·
-                  </span>
-                  {PODIUM_POINTS[item.place].toLocaleString("es-AR")} pts
-                </p>
-                <p className="mt-0.5 text-sm break-words text-slate-100">
-                  {team
-                    ? `${team.name} · ${houseName(team.houseId)}`
-                    : "Pendiente"}
-                </p>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
+              return (
+                <li
+                  key={item.key}
+                  className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2"
+                >
+                  <p className="text-[11px] font-semibold tracking-wide text-cyan-300 uppercase">
+                    {placeWord(item.place)}
+                    <span className="mx-1.5 text-slate-600" aria-hidden="true">
+                      ·
+                    </span>
+                    {PODIUM_POINTS[item.place].toLocaleString("es-AR")} pts
+                  </p>
+                  <p className="mt-0.5 text-sm break-words text-slate-100">
+                    {team
+                      ? `${team.name} · ${houseName(team.houseId)}`
+                      : "Equipo eliminado"}
+                  </p>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ) : null}
     </div>
   );
 }
