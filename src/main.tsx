@@ -19,6 +19,25 @@ const router = createBrowserRouter([
         lazy: () => import("./pages/(public)/login/page.tsx"),
       },
       {
+        lazy: () => import("./components/public/PublicLayout.tsx"),
+        children: [
+          {
+            path: "torneos",
+            children: [
+              {
+                index: true,
+                lazy: () => import("./pages/(public)/torneos/page.tsx"),
+              },
+              {
+                path: ":tournamentId",
+                lazy: () =>
+                  import("./pages/(public)/torneos/[tournamentId]/page.tsx"),
+              },
+            ],
+          },
+        ],
+      },
+      {
         middleware: [authMiddleware],
         lazy: () => import("./pages/(protected)/layout.tsx"),
         children: [
