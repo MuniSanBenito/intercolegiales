@@ -42,6 +42,10 @@ const router = createBrowserRouter([
         lazy: () => import("./pages/(protected)/layout.tsx"),
         children: [
           {
+            path: "posiciones",
+            lazy: () => import("./pages/(protected)/posiciones/page.tsx"),
+          },
+          {
             path: "panel",
             lazy: () => import("./pages/(protected)/panel/layout.tsx"),
             children: [

@@ -101,6 +101,188 @@
   animation: zoomIn 300ms ease-out both;
 }
 
+@keyframes ceremonySlam {
+  0% {
+    opacity: 1;
+    transform: scale(1.45) rotate(-6deg);
+    filter: blur(0);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.9) rotate(2deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes ceremonyRipple {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.55);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.15);
+  }
+}
+
+@keyframes ceremonyFlash {
+  0% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes ceremonyChampion {
+  0% {
+    opacity: 0;
+    transform: translateY(5rem) scale(0.45);
+    filter: blur(10px);
+  }
+  62% {
+    opacity: 1;
+    transform: translateY(-0.7rem) scale(1.05);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ceremonyRise {
+  0% {
+    opacity: 0;
+    transform: translateY(8rem) scale(0.82);
+  }
+  68% {
+    opacity: 1;
+    transform: translateY(-0.4rem) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ceremonyLogo {
+  0% {
+    opacity: 0;
+    transform: scale(0.15) rotate(-24deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.12) rotate(6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes ceremonyPedestal {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ceremonyShine {
+  from {
+    transform: translateX(-130%);
+  }
+  to {
+    transform: translateX(130%);
+  }
+}
+
+@keyframes ceremonyTitle {
+  0% {
+    opacity: 0;
+    letter-spacing: 0.4em;
+    transform: translateY(0.75rem);
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: 0;
+    transform: translateY(0);
+  }
+}
+
+.ceremony-slam {
+  animation: ceremonySlam 0.72s cubic-bezier(0.16, 0.8, 0.28, 1.15) both;
+}
+
+.ceremony-ripple {
+  animation: ceremonyRipple 0.95s ease-out both;
+}
+
+.ceremony-ripple-late {
+  animation-delay: 0.12s;
+}
+
+.ceremony-flash {
+  animation: ceremonyFlash 0.55s ease-out both;
+}
+
+.ceremony-ring {
+  transition:
+    stroke-dashoffset 1s linear,
+    stroke 0.3s ease;
+}
+
+.ceremony-champion {
+  animation: ceremonyChampion 0.95s cubic-bezier(0.16, 0.84, 0.3, 1.15) both;
+}
+
+.ceremony-rise {
+  animation: ceremonyRise 0.85s cubic-bezier(0.16, 0.84, 0.28, 1.1) both;
+}
+
+.ceremony-rise-late {
+  animation-delay: 180ms;
+}
+
+.ceremony-logo {
+  animation: ceremonyLogo 0.8s cubic-bezier(0.16, 0.84, 0.3, 1.2) both;
+}
+
+.ceremony-pedestal {
+  transform-origin: bottom;
+  animation: ceremonyPedestal 0.7s 0.25s cubic-bezier(0.16, 0.84, 0.32, 1) both;
+}
+
+.ceremony-title {
+  animation: ceremonyTitle 0.7s ease-out both;
+}
+
+.ceremony-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ceremony-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 68%
+  );
+  transform: translateX(-130%);
+  animation: ceremonyShine 1.05s 0.4s ease-out both;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -109,6 +291,50 @@
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .ceremony-slam {
+    animation-duration: 0.72s !important;
+  }
+
+  .ceremony-ripple {
+    animation-duration: 0.95s !important;
+  }
+
+  .ceremony-flash {
+    animation-duration: 0.55s !important;
+  }
+
+  .ceremony-ring {
+    transition-duration: 1s !important;
+  }
+
+  .ceremony-champion {
+    animation-duration: 0.95s !important;
+  }
+
+  .ceremony-rise {
+    animation-duration: 0.85s !important;
+  }
+
+  .ceremony-rise-late {
+    animation-delay: 180ms !important;
+  }
+
+  .ceremony-logo {
+    animation-duration: 0.8s !important;
+  }
+
+  .ceremony-pedestal {
+    animation-duration: 0.7s !important;
+  }
+
+  .ceremony-title {
+    animation-duration: 0.7s !important;
+  }
+
+  .ceremony-card::after {
+    animation-duration: 1.05s !important;
   }
 }
 

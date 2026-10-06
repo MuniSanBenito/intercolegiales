@@ -7,12 +7,13 @@ import {
   Medal,
   Menu,
   School,
+  Sparkles,
   Trophy,
   Users,
   X,
 } from "lucide-react";
 import { useEffect, useId, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router";
+import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import { auth } from "../../../lib/firebase";
 
 const navItems = [
@@ -171,6 +172,20 @@ export function Component() {
               </NavLink>
             );
           })}
+
+          <div className="mt-auto border-t border-cyan-500/20 pt-3">
+            <Link
+              to="/posiciones"
+              onClick={() => setOpen(false)}
+              className="flex min-h-11 items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left font-cyber text-xs font-bold tracking-widest text-slate-300 uppercase transition-colors hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              <Sparkles
+                className="h-4 w-4 shrink-0 text-cyan-400"
+                aria-hidden="true"
+              />
+              Ir a Posiciones
+            </Link>
+          </div>
         </nav>
 
         <div className="border-t border-cyan-500/20 p-3">
