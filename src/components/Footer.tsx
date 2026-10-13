@@ -98,7 +98,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a href={sectionHref('#posiciones')} onClick={() => sound.click()} onMouseEnter={() => sound.hover()} className="hover:text-cyan-400 transition-colors">
-                  ✦ Tabla de Posiciones
+                  ✦ Resultados finales
                 </a>
               </li>
             </ul>
